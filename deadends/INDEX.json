@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "updated": "2026-10-13",
+  "entries": [
+    {
+      "id": "e001",
+      "slug": "git-submodule-porcelain-unavailable",
+      "title": "用 git submodule 子命令挂载三层结构",
+      "status": "closed",
+      "feature": null,
+      "reason": "constraint-violation",
+      "reopenIf": "沙箱允许创建命名管道(msys 信号管道可用),或 git submodule 不再是 shell 实现时",
+      "scope": "本工作区内所有子模块的挂载、规范化与状态查询",
+      "evidence": "memory/facts/f001-git-submodule-commands-fail-in-dsh-sandbox.md",
+      "path": "memory/deadends/e001-git-submodule-porcelain-unavailable.md"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "updated": "2026-10-13",
+  "entries": [
+    {
+      "id": "f001",
+      "slug": "git-submodule-commands-fail-in-dsh-sandbox",
+      "title": "本沙箱内 git submodule 系列命令一律 exit 66,只能用 plumbing 等价实现",
+      "status": "verified",
+      "feature": null,
+      "coldStart": true,
+      "scope": "本项目工作区内任何 git submodule 子命令(status / absorbgitdirs / add / update)",
+      "verified": "在 workspace-write 模式下执行 git submodule status 与 git submodule absorbgitdirs specs,两者均 exit 66,stderr 为 sh.exe: fatal error - couldn't create signal pipe, Win32 error 5;同一环境 git status / git ls-files --stage / git -C <子模块> 全部 exit 0",
+      "evidence": "memory/deadends/e001-git-submodule-porcelain-unavailable.md",
+      "path": "memory/facts/f001-git-submodule-commands-fail-in-dsh-sandbox.md"
+    },
+    {
+      "id": "f002",
+      "slug": "specs-gitfile-reported-as-malformed-feature",
+      "title": "specs/.git(gitfile)会被 speckit helper 报为畸形 feature,不影响阶段推导",
+      "status": "verified",
+      "feature": null,
+      "coldStart": false,
+      "scope": "specs 作为子模块挂载时,/speckit features 与 derive-stage 的诊断输出",
+      "verified": "读 helper 源码确认 lib/workflow.js:764 对 specsRoot 直接 readdirSync 且不跳过点文件,第 771 行把任何非目录条目推入 malformed;实测 features 仍返回 ok:true、features 列表正确、nextNumber=2,derive-stage 仍返回 tasked",
+      "evidence": "specs/001-anthonys-wrath",
+      "path": "memory/facts/f002-specs-gitfile-reported-as-malformed-feature.md"
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "schema": 2,
+  "updated": "2026-10-13T01:35:00+08:00",
+  "focus": "为项目建立 spec / memory / src 三层结构:三层已挂载为子模块并锁定版本,下一步待决的是宪法修订与 spec 侧缺陷修复。",
+  "blockers": [
+    "四级 git 仓库(顶层 + specs/memory/src)均无远端裸库,origin 指向尚不存在的 C:/Users/Zhaoji/Desktop/杀戮尖塔mod-{specs,memory,src}.git,换目录或换机器无法复原",
+    "本沙箱下 git submodule 系列命令因 sh.exe 无法创建信号管道而一律 exit 66,只能用 plumbing 等价实现",
+    "宪法修订(四条新条款)与 plan/tasks 路径对齐未获授权,已按用户决定推迟"
+  ],
+  "next": "征求用户对宪法修订稿的批准;批准后修订 .speckit/constitution.md,再改 plan.md 的 Maven 根路径表述。",
+  "artifacts": [
+    { "path": ".speckit/constitution.md", "kind": "constitution", "note": "现有 5 条原则 + 1 附录,待新增四条" },
+    { "path": "specs/001-anthonys-wrath/spec.md", "kind": "spec", "note": "40 个任务,0 完成" },
+    { "path": "specs/001-anthonys-wrath/plan.md", "kind": "plan", "note": "第 5、7、55 行仍假设 Maven 在仓库根,需按子模块布局修正" },
+    { "path": "specs/001-anthonys-wrath/tasks.md", "kind": "tasks", "note": "编号缺 T005/T006;plan 的 T-P1/T-V* 标签在任务表内不存在" },
+    { "path": "AGENTS.md", "kind": "binding", "note": "记忆层绑定,spec 位置已填实" },
+    { "path": ".gitmodules", "kind": "config", "note": "三层子模块声明" }
+  ],
+  "decisions": [
+    { "id": "001", "topic": "三层结构与版本锁定", "path": "memory/log/001-20261013-three-layer-submodules.md" }
+  ],
+  "memoryStores": {
+    "facts": "memory/facts/INDEX.json",
+    "deadends": "memory/deadends/INDEX.json"
+  }
+}
