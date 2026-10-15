@@ -40,7 +40,7 @@
     },
     {
       "id": "f004",
-      "slug": "stat-cache-false-positive-on-unchanged-files",
+      "slug": "stat-cache-false-positive",
       "title": "git status 会对内容未变的文件报 M,判定方法是比对 blob 哈希",
       "status": "verified",
       "feature": null,
