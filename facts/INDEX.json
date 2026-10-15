@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated": "2026-10-13",
+  "updated": "2026-10-15",
   "entries": [
     {
       "id": "f001",
@@ -25,6 +25,18 @@
       "verified": "读 helper 源码确认 lib/workflow.js:764 对 specsRoot 直接 readdirSync 且不跳过点文件,第 771 行把任何非目录条目推入 malformed;实测 features 仍返回 ok:true、features 列表正确、nextNumber=2,derive-stage 仍返回 tasked",
       "evidence": "specs/001-anthonys-wrath",
       "path": "memory/facts/f002-specs-gitfile-reported-as-malformed-feature.md"
+    },
+    {
+      "id": "f003",
+      "slug": "git-diff-worktree-side-silent-in-sandbox",
+      "title": "本沙箱里 git diff 不输出工作区→索引的正文,须改用 add 后看 --cached",
+      "status": "verified",
+      "feature": null,
+      "coldStart": true,
+      "scope": "本项目工作区内查看未暂存改动时",
+      "verified": "对同一文件:git hash-object(e1492175)与 git ls-files -s(d9cb4c08)给出不同 blob,git diff-files --stat 显示 72 行改动,而 git diff / git diff-index HEAD / --no-pager 变体全部只给 stat 不给正文;执行 git add -A 后索引 blob 更新为新值且 git diff --cached 正文完整",
+      "evidence": "memory/facts/f003-git-diff-worktree-side-silent-in-sandbox.md",
+      "path": "memory/facts/f003-git-diff-worktree-side-silent-in-sandbox.md"
     }
   ]
 }
