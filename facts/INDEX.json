@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated": "2026-10-15",
+  "updated": "2026-10-16",
   "entries": [
     {
       "id": "f001",
@@ -49,6 +49,30 @@
       "verified": "对 .gitmodules 与 AGENTS.md:git hash-object 与 git rev-parse HEAD:<file> 返回同一个 blob(fd0cd022 / cd0c5668),git diff 空输出,git status 仍报 M;git diff-files 输出的两列 blob 哈希相同即可判定为 stat 缓存过期;git add 之后该条目自行消失且未暂存任何内容",
       "evidence": "memory/facts/f004-stat-cache-false-positive.md",
       "path": "memory/facts/f004-stat-cache-false-positive.md"
+    },
+    {
+      "id": "f005",
+      "slug": "sts1-unremovable-and-curse-pool-are-hardcoded-cardids",
+      "title": "杀戮尖塔 1 的不可移除与不进随机诅咒池都是硬编码 cardID 名单",
+      "status": "verified",
+      "feature": "001-anthonys-wrath",
+      "coldStart": true,
+      "scope": "杀戮尖塔 1 桌面版 V2.3.4 (2022-12-18);换版本需重跑反汇编;不适用于 2 代",
+      "verified": "javap -p -c 反汇编本机 desktop-1.0.jar:CardGroup.getPurgeableCards 三条 ldc + String.equals;AbstractDungeon.addCurseCards 遍历 CardLibrary.cards 并排除四个 ID;FountainOfCurseRemoval 自建循环 + removeCard;AbstractPlayer.isCursed 同款过滤;7038 个 class 常量池扫描得 21 个 getPurgeableCards 调用者",
+      "evidence": "memory/log/007-20261016-f001-vanilla-interception.md",
+      "path": "memory/facts/f005-sts1-unremovable-and-curse-pool-are-hardcoded-cardids.md"
+    },
+    {
+      "id": "f006",
+      "slug": "speckit-gate-hard-rules",
+      "title": "speckit 门禁:依赖必须前置、spec 机器 token 必须全局唯一",
+      "status": "verified",
+      "feature": null,
+      "coldStart": true,
+      "scope": "@marcsierszen/dsh-specify-lite 当时安装版本;不含项目自建 check-artifacts.mjs",
+      "verified": "T007 前向依赖报 MALFORMED_ARTIFACT: Dependency T009 must precede T007;spec.md 的 EC-010 引用 FR-011 致 derive-stage spec.state=invalid 且 diagnostics=[];读 lib/workflow.js:272-284 确认 tokensValid(text, true);两处修正后 select-tasks ok=true、derive-stage stage=tasked",
+      "evidence": "memory/log/007-20261016-f001-vanilla-interception.md",
+      "path": "memory/facts/f006-speckit-gate-hard-rules.md"
     }
   ]
 }
