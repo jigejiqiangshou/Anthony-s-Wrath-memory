@@ -37,6 +37,18 @@
       "verified": "对同一文件:git hash-object(e1492175)与 git ls-files -s(d9cb4c08)给出不同 blob,git diff-files --stat 显示 72 行改动,而 git diff / git diff-index HEAD / --no-pager 变体全部只给 stat 不给正文;执行 git add -A 后索引 blob 更新为新值且 git diff --cached 正文完整",
       "evidence": "memory/facts/f003-git-diff-worktree-side-silent-in-sandbox.md",
       "path": "memory/facts/f003-git-diff-worktree-side-silent-in-sandbox.md"
+    },
+    {
+      "id": "f004",
+      "slug": "stat-cache-false-positive-on-unchanged-files",
+      "title": "git status 会对内容未变的文件报 M,判定方法是比对 blob 哈希",
+      "status": "verified",
+      "feature": null,
+      "coldStart": false,
+      "scope": "本项目工作区内 git status --porcelain 报出改动、但 git diff 无正文时",
+      "verified": "对 .gitmodules 与 AGENTS.md:git hash-object 与 git rev-parse HEAD:<file> 返回同一个 blob(fd0cd022 / cd0c5668),git diff 空输出,git status 仍报 M;git diff-files 输出的两列 blob 哈希相同即可判定为 stat 缓存过期;git add 之后该条目自行消失且未暂存任何内容",
+      "evidence": "memory/facts/f004-stat-cache-false-positive.md",
+      "path": "memory/facts/f004-stat-cache-false-positive.md"
     }
   ]
 }

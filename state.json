@@ -1,25 +1,28 @@
 {
   "schema": 2,
-  "updated": "2026-10-15T17:35:00+08:00",
-  "focus": "三层结构、远端与 spec 侧修正已全部完成:四个 GitHub 仓库锁定版本,宪法补至九条,plan/tasks 已对齐;下一步是跑一次云端复原验证,再进实现。",
+  "updated": "2026-10-15T18:40:00+08:00",
+  "focus": "error 级分析发现已全部修复(依赖 jar 分层、占位图归属、探针兜底、验证记录归属),并据此确立了三层验证记录机制;下一步是推送并做云端复原验证,再进实现。",
   "blockers": [
-    "顶层仓库 3631f41 与 memory 层 0a6a30b 尚未推送到 GitHub(沙箱连不上 GitHub,推送需在普通终端执行)",
+    "顶层 c82d83a、specs 250c25f、memory 本次提交尚未推送到 GitHub(沙箱连不上 GitHub,推送需在普通终端执行)",
     "端到端复原验证未做:需在普通终端从云端克隆顶层并跑 submodule status,确认三个 gitlink 可复原",
-    "实现期三处未决风险:T018/T029 依赖开发者控制台,T037 的占位贴图归属目录与忽略规则未定",
+    "analyze 的 warning 级发现未处理:T006/T013/T018/T029/T035 的表述类修正已顺带完成,但 F-006 之外的若干条目未逐条复述",
     "本沙箱下 git submodule 系列命令因 sh.exe 无法创建信号管道而一律 exit 66,只能用 plumbing 等价实现"
   ],
-  "next": "在普通终端推送顶层与 memory 层,然后跑一次 curl 复原验证:git clone --recurse-submodules https://github.com/jigejiqiangshou/Anthony-s-Wrath.git 并核对 submodule status 三行哈希。",
+  "next": "在普通终端推送三层与顶层(先子模块后顶层),然后跑 git clone --recurse-submodules https://github.com/jigejiqiangshou/Anthony-s-Wrath.git 并核对 submodule status 三行哈希。",
   "artifacts": [
     { "path": ".speckit/constitution.md", "kind": "constitution", "note": "九条原则 + 附录;六至九条为三层归属、版本锁定、构建配置归属、提交顺序" },
     { "path": "specs/001-anthonys-wrath/spec.md", "kind": "spec", "note": "行为规格,未改动" },
-    { "path": "specs/001-anthonys-wrath/plan.md", "kind": "plan", "note": "已对齐三层布局:Maven 根在顶层,sourceDirectory 指向 src 子模块;T-P1/T-V* 已映射到任务号" },
-    { "path": "specs/001-anthonys-wrath/tasks.md", "kind": "tasks", "note": "40 个任务,T005 空洞已填平为 T001-T040,依赖零悬空" },
+    { "path": "specs/001-anthonys-wrath/plan.md", "kind": "plan", "note": "Maven 根在顶层、依赖 jar 在顶层 libs/、占位图在 src/main/resources/placeholder/;验证流程写在本节,记录写入 memory/log/" },
+    { "path": "specs/001-anthonys-wrath/tasks.md", "kind": "tasks", "note": "42 个任务,T001-T042 连续升序、依赖零悬空" },
+    { "path": "memory/README.md", "kind": "convention", "note": "本项目三层验证记录机制的定义:流程在 spec、日志在 log/、结论严入 facts/" },
     { "path": "AGENTS.md", "kind": "binding", "note": "记忆层绑定,spec 位置已填实" },
-    { "path": ".gitmodules", "kind": "config", "note": "三层子模块声明,已指向 GitHub;无 BOM" }
+    { "path": ".gitmodules", "kind": "config", "note": "三层子模块声明,已指向 GitHub;无 BOM" },
+    { "path": ".gitignore", "kind": "config", "note": "已移除 !libs/*.jar 白名单,依赖 jar 一律不入库" }
   ],
   "decisions": [
     { "id": "001", "topic": "三层结构与版本锁定", "path": "memory/log/001-20261013-three-layer-submodules.md" },
-    { "id": "002", "topic": "远端定在 GitHub 四仓库并完成三层重配", "path": "memory/log/002-20261015-github-remotes.md" }
+    { "id": "002", "topic": "远端定在 GitHub 四仓库并完成三层重配", "path": "memory/log/002-20261015-github-remotes.md" },
+    { "id": "003", "topic": "analyze 四项 error 的修复口径与三层验证记录机制", "path": "memory/log/003-20261015-analyze-error-fixes.md" }
   ],
   "memoryStores": {
     "facts": "memory/facts/INDEX.json",
