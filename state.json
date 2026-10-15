@@ -1,28 +1,29 @@
 {
   "schema": 2,
-  "updated": "2026-10-15T18:40:00+08:00",
-  "focus": "error 级分析发现已全部修复(依赖 jar 分层、占位图归属、探针兜底、验证记录归属),并据此确立了三层验证记录机制;下一步是推送并做云端复原验证,再进实现。",
+  "updated": "2026-10-15T19:10:00+08:00",
+  "focus": "error 与 warning 两级分析发现已全部清零,并固化了一份文档一致性检查器;下一步是推送、云端复原验证、重跑 analyze,再进实现。",
   "blockers": [
-    "顶层 c82d83a、specs 250c25f、memory 本次提交尚未推送到 GitHub(沙箱连不上 GitHub,推送需在普通终端执行)",
+    "顶层 6b4bcbb、specs c8dadc4、memory 本次提交尚未推送到 GitHub(沙箱连不上 GitHub,推送需在普通终端执行)",
     "端到端复原验证未做:需在普通终端从云端克隆顶层并跑 submodule status,确认三个 gitlink 可复原",
-    "analyze 的 warning 级发现未处理:T006/T013/T018/T029/T035 的表述类修正已顺带完成,但 F-006 之外的若干条目未逐条复述",
+    "实现期三处未决风险:T018/T029 需确认开发者控制台可用(任务里已写明替代手段),T037 的占位图目录与忽略规则已定但尚未创建",
     "本沙箱下 git submodule 系列命令因 sh.exe 无法创建信号管道而一律 exit 66,只能用 plumbing 等价实现"
   ],
-  "next": "在普通终端推送三层与顶层(先子模块后顶层),然后跑 git clone --recurse-submodules https://github.com/jigejiqiangshou/Anthony-s-Wrath.git 并核对 submodule status 三行哈希。",
+  "next": "在普通终端推送三层与顶层(先子模块后顶层),然后 git clone --recurse-submodules https://github.com/jigejiqiangshou/Anthony-s-Wrath.git 并核对 submodule status 三行哈希;随后重跑 /speckit-analyze。",
   "artifacts": [
-    { "path": ".speckit/constitution.md", "kind": "constitution", "note": "九条原则 + 附录;六至九条为三层归属、版本锁定、构建配置归属、提交顺序" },
-    { "path": "specs/001-anthonys-wrath/spec.md", "kind": "spec", "note": "行为规格,未改动" },
-    { "path": "specs/001-anthonys-wrath/plan.md", "kind": "plan", "note": "Maven 根在顶层、依赖 jar 在顶层 libs/、占位图在 src/main/resources/placeholder/;验证流程写在本节,记录写入 memory/log/" },
-    { "path": "specs/001-anthonys-wrath/tasks.md", "kind": "tasks", "note": "42 个任务,T001-T042 连续升序、依赖零悬空" },
-    { "path": "memory/README.md", "kind": "convention", "note": "本项目三层验证记录机制的定义:流程在 spec、日志在 log/、结论严入 facts/" },
-    { "path": "AGENTS.md", "kind": "binding", "note": "记忆层绑定,spec 位置已填实" },
-    { "path": ".gitmodules", "kind": "config", "note": "三层子模块声明,已指向 GitHub;无 BOM" },
+    { "path": ".speckit/constitution.md", "kind": "constitution", "note": "九条原则 + 附录;开头的版本记录断言已补唯一事实来源与违规判定" },
+    { "path": "specs/001-anthonys-wrath/spec.md", "kind": "spec", "note": "行为规格未改动;第 72/79 行的假设待 T030 的实测结论写回" },
+    { "path": "specs/001-anthonys-wrath/plan.md", "kind": "plan", "note": "Requirement Mapping 全部带真实任务号;订阅者命名统一;T-V1..T-V6 写明记录落点;Risks 兜底带任务号" },
+    { "path": "specs/001-anthonys-wrath/tasks.md", "kind": "tasks", "note": "42 个任务连续升序、依赖零悬空;SC-004/EC-004/EC-005 已并入 T032/T027/T035" },
+    { "path": "memory/log/check-artifacts.mjs", "kind": "tool", "note": "文档一致性检查器:编号、依赖、需求承接、plan 引用、标签映射;改动 spec 层后复跑" },
+    { "path": "memory/README.md", "kind": "convention", "note": "三层验证记录机制的定义:流程在 spec、日志在 log/、结论严入 facts/" },
+    { "path": "AGENTS.md", "kind": "binding", "note": "记忆层绑定,spec 位置已填实,含验证记录分级约定" },
     { "path": ".gitignore", "kind": "config", "note": "已移除 !libs/*.jar 白名单,依赖 jar 一律不入库" }
   ],
   "decisions": [
     { "id": "001", "topic": "三层结构与版本锁定", "path": "memory/log/001-20261013-three-layer-submodules.md" },
     { "id": "002", "topic": "远端定在 GitHub 四仓库并完成三层重配", "path": "memory/log/002-20261015-github-remotes.md" },
-    { "id": "003", "topic": "analyze 四项 error 的修复口径与三层验证记录机制", "path": "memory/log/003-20261015-analyze-error-fixes.md" }
+    { "id": "003", "topic": "analyze 四项 error 的修复口径与三层验证记录机制", "path": "memory/log/003-20261015-analyze-error-fixes.md" },
+    { "id": "004", "topic": "warning 级清零与覆盖度必须机械核对", "path": "memory/log/004-20261015-warning-fixes.md" }
   ],
   "memoryStores": {
     "facts": "memory/facts/INDEX.json",
