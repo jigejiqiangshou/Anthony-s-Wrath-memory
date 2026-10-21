@@ -1,35 +1,39 @@
 {
   "schema": 2,
-  "updated": "2026-10-16T01:15:05+08:00",
-  "focus": "F-001 已按路线 A 落地并提交(specs 38b1de4 / memory 339d2c4 / 顶层 677b5f5),三处门禁全绿;当前转入二轮 analyze 余下发现的批量机械修订。",
+  "updated": "2026-10-16T01:38:40+08:00",
+  "focus": "四轮 analyze 的批量修订已落盘并提交:specs 层 db482e6(spec/plan/tasks),memory 层与顶层 .gitignore 同轮提交;F-018 按修法 a 处理,任务数 45→46,三条门禁全绿。当前唯一硬阻塞是基础 mod 未装进游戏 mods/。",
   "blockers": [
-    "本轮提交尚未推送到 GitHub(沙箱连不上 GitHub,推送需在普通终端执行);云端复原验证(克隆顶层 + submodule status 核对三行哈希)同样待做",
-    "批量修订含两处需口径确认:F-005 的抽牌堆观察手段(推荐「冰冻之眼」优先、控制台备选),F-010 的 OQ-005 收敛为\"显示效果说明文本\"",
-    "游戏目录下没有 mods/ 文件夹:ModTheSpire 启动器在,但 BaseMod / StSLib 未安装,T002/T003 与 T004 开工前必须先补齐,否则探针跑不起来",
+    "游戏目录下没有 mods/ 文件夹:ModTheSpire 启动器在,但 BaseMod / StSLib 未安装;T004 起的一切游戏内任务都卡在这一步,只能由人工安装(Steam 创意工坊或手动放 jar),本沙箱不代劳",
+    "这批改动已按宪法第九条提交:specs 层 db482e6 → memory 层 → 顶层一次提交推进两个指针;但尚未推送到 GitHub(沙箱连不上 GitHub,推送需在普通终端执行),云端复原验证(克隆顶层 + 核对三行 gitlink 哈希)同样待做",
+    "接口名 `CustomModeMods` 是否应改为 `AddCustomModeModsSubscriber` 仍无法证实:BaseMod wiki 抓取只返回导航壳,留 T003 装上 BaseMod jar 后对照实物再定(F-012 因此未改)",
     "实现期未决的三处时序要等探针:PostDungeonInitialize 是否晚于 initializeCardPools、是否存在不经 getPurgeableCards / 净化之泉的移除路径、效果直接取牌与抽牌是否同一判定点",
+    "check-artifacts.mjs 仍不查依赖先后序与成环(本轮用临时脚本核对后已删,脚本不留存);并入常驻检查器是 T043 的实现工作",
     "本沙箱下 git submodule 系列命令因 sh.exe 无法创建信号管道而一律 exit 66,只能用 plumbing 等价实现"
   ],
-  "next": "按 memory/log/008 的批次清单做一次批量机械修订(1 个 error F-002 + 9 个 warning F-003..F-011),复跑 select-tasks / derive-stage / check-artifacts 三条门禁后提交 specs 层。",
+  "next": "顺序执行:①人工把 ModTheSpire 加载器与 BaseMod / StSLib 装进游戏目录 mods/ 并把截图或日志存 memory/log/(这是 T004 开工前提);②按 T043 把先后序与成环检查并入常驻门禁后复跑三条;③在普通终端推送三层并做云端复原验证(本沙箱不推送);④第五轮 /speckit-analyze 复核 error 与 warning 是否清零。",
   "notes": [
-    "批量修订范围:error 1 项(F-002)+ warning 9 项(F-003..F-011),逐项口径与被否决做法见 memory/log/008;10 项全是 spec 层纯文本修订,不触碰 src/ 代码",
-    "F-002 与 F-004 耦合:T002/T003 对调后,T042 依赖里指向入口类的那一项必须跟着改为 T003;依赖只能前置,不能给 T002 加指向 T003 的依赖",
-    "未纳入本批的 6 条 note:F-012(接口名)、F-013(字符串字面量无验收)、F-014(SC-005 映射)、F-015(.gitignore 白名单)、F-016(控制台可用性)同为纯文本可机械修改,F-017(宪法第七/九条无落点)需新增 T046 里程碑任务",
-    "F-001 的实证结论已升入 facts:f005(本体硬编码 cardID)与 f006(门禁两条硬规则)"
+    "本轮修订共 23 项:F-002..F-018、F-021..F-026;逐项口径、F-018 选修法 a 与否决 b 的四个形态、被删的临时脚本,全部记在 memory/log/009",
+    "F-018 的三处落点:plan 的 Technical Context(运行期前置)、tasks 的 T004 正文(前置 + 证据记入 memory/log/)、plan 的 Constraints 与 来自规格 两节",
+    "T004 的依赖由 T002 改为 T003:只把 T002/T003 内容对调会让探针仍早于依赖配置,这一步是 008 方案里没有的补充",
+    "新增 T046(宪法第七/九条的里程碑验收,依赖 T039/T042/T043/T044,排在末尾);T045 依赖不变,仍不与 T046 互相依赖",
+    "F-012(接口名)与 F-023(T004 体量)按评审结论保留未改:F-012 证据不足,F-023 是已接受的取舍",
+    "F-021 已按评审落地:memory/README.md 的归属一节放宽为「以 specs/ 与 src/ 为主,顶层配置文件只登记路径不复制正文」",
+    "顶层的 memory/tools/ 本轮未创建(临时脚本用完即删),避免登记计划中但尚未创建的产物"
   ],
   "artifacts": [
-    { "path": ".speckit/constitution.md", "kind": "constitution", "note": "九条原则 + 附录;第三条明确原版改动集中在 patches/vanilla/,F-001 的落地正是引用该条,宪法本轮未改动" },
-    { "path": "specs/001-anthonys-wrath/spec.md", "kind": "spec", "note": "已含 EC-010(不进随机诅咒池)与 EC-011(蓝蜡烛与消耗类效果的既有规则);第 72/78 行与 EC-003 的矛盾(F-007)待批量修订" },
-    { "path": "specs/001-anthonys-wrath/plan.md", "kind": "plan", "note": "Architecture 第 8 项(补丁包与两处拦截 + 诅咒池钩子)已就位;待批量修订项:`ModTheSpire.json`(F-003)、T-V1 观察手段(F-005)、第 10/138 行任务号(F-002)" },
-    { "path": "specs/001-anthonys-wrath/tasks.md", "kind": "tasks", "note": "45 个任务连续升序、依赖全部前置;待批量修订项:T002/T003 对调(F-002)、T042 依赖(F-004)、T027 多副本观察(F-006)、T010/T023 依赖(F-008)、T004/T026/T035 触发式洗牌(F-009)、T043 门禁扩展(F-011)" },
-    { "path": "memory/log/008-20261016-batch-revision-scope.md", "kind": "record", "note": "批量修订批次:10 项逐项口径、F-002 与 F-004 的耦合、未纳入的 6 条 note、被否决的三种做法、下一轮执行方式" },
-    { "path": "memory/log/007-20261016-f001-vanilla-interception.md", "kind": "record", "note": "F-001 的实证过程(反汇编方法与四处硬编码 ID)、三个衍生问题、路线 A 落地清单、门禁实测输出与两条工具规则" },
+    { "path": ".speckit/constitution.md", "kind": "constitution", "note": "九条原则 + 附录;第三条明确原版改动集中在 patches/vanilla/;本轮未改动" },
+    { "path": "specs/001-anthonys-wrath/spec.md", "kind": "spec", "note": "本轮改 7 处:FR-001 补卸载后不出现且不报错、EC-003 与两条假设改为以参照牌实测为准、SC-001 补洗牌前见证、SC-005 收窄、OQ-005 关闭(必须显示效果说明文本)" },
+    { "path": "specs/001-anthonys-wrath/plan.md", "kind": "plan", "note": "本轮改 12 处:运行期前置(基础 mod 装入游戏 mods/)、ModTheSpire.json、依赖版本任务号 T003→T002、T-V1 观察手段(冰冻之眼优先)、T-V2 多副本、T-V5 洗牌前、T-V3/V6 控制台可用性、T-P1 非耗尽洗牌与锚点写回、SC-005 范围、T043 检查范围、字符串字面量落点" },
+    { "path": "specs/001-anthonys-wrath/tasks.md", "kind": "tasks", "note": "46 个任务(T001–T046):T002/T003 对调、T004 依赖改 T003 并加前置与非耗尽洗牌、T010/T023 依赖链、T027 补 FR-010、T029 可用性确认、T033 补 FR-001、T037 明确新建 src/.gitignore、T039 补字面量核对、T042 依赖补全、T043/T044 扩检查范围、新增 T046" },
+    { "path": "memory/log/009-20261016-analyze-round4-batch-revision.md", "kind": "record", "note": "本轮批量修订的逐项口径(23 项)、F-018 修法 a 的三处落点、否决 b 的四个形态、门禁实测输出、specs 提交号 db482e6 与下一步顺序" },
+    { "path": "memory/log/008-20261016-batch-revision-scope.md", "kind": "record", "note": "上一轮的批次清单(10 项);本轮已按其口径执行并超出其范围(补 F-013/F-015/F-018/F-021..F-026 与 T046)" },
+    { "path": "memory/log/007-20261016-f001-vanilla-interception.md", "kind": "record", "note": "F-001 的实证过程(反汇编方法与四处硬编码 ID)、路线 A 落地清单、门禁实测输出与两条工具规则" },
     { "path": "memory/facts/f005-sts1-unremovable-and-curse-pool-are-hardcoded-cardids.md", "kind": "fact", "note": "verified:杀戮尖塔 1 V2.3.4 的不可移除/诅咒池都是硬编码 cardID;含参照牌类参数、蓝蜡烛判定、Obtain 效果链路" },
-    { "path": "memory/facts/f006-speckit-gate-hard-rules.md", "kind": "fact", "note": "verified:门禁要求依赖前置、spec 机器 token 全局唯一;项目自建检查器不覆盖这两条,批量修订必须 helper 与自建检查器一起跑" },
-    { "path": "memory/log/check-artifacts.mjs", "kind": "tool", "note": "文档一致性检查器:编号、依赖悬空、需求承接、plan 引用、标签映射;仍缺先后序与成环检查(F-011 的修法是写进 T043)" },
-    { "path": "memory/log/005-agent-dev-memory-upgrade-proposal.md", "kind": "proposal", "note": "agent-dev-memory 常驻改进提案:门禁技能化、归属划分、豁免机制、四项验收判据;技能本体交付前不改动" },
-    { "path": "memory/README.md", "kind": "convention", "note": "三层验证记录机制的定义:流程在 spec、日志在 log/、结论严入 facts/" },
+    { "path": "memory/facts/f006-speckit-gate-hard-rules.md", "kind": "fact", "note": "verified:门禁要求依赖前置、spec 机器 token 全局唯一;本轮 F-018 修法 b 的 b1 形态正是被这条前置规则否决" },
+    { "path": "memory/log/check-artifacts.mjs", "kind": "tool", "note": "文档一致性检查器:编号、依赖悬空、需求承接、plan 引用、标签映射;仍缺先后序与成环检查(改法已写进 T043,本轮用临时脚本代跑后删除)" },
+    { "path": "memory/README.md", "kind": "convention", "note": "三层验证记录机制 + 归属一节(本轮放宽为:顶层配置文件只登记路径不复制正文)" },
     { "path": "AGENTS.md", "kind": "binding", "note": "记忆层绑定,spec 位置已填实,含验证记录分级约定" },
-    { "path": ".gitignore", "kind": "config", "note": "已移除 !libs/*.jar 白名单,依赖 jar 一律不入库;仍留有 gradle wrapper jar 白名单(F-015,未纳入本批)" }
+    { "path": ".gitignore", "kind": "config", "note": "本轮删掉两条 gradle wrapper jar 白名单,`*.jar` 现在是无例外的最终规则(与 plan 第 7 项一致)" }
   ],
   "decisions": [
     { "id": "001", "topic": "三层结构与版本锁定", "path": "memory/log/001-20261013-three-layer-submodules.md" },
@@ -39,7 +43,8 @@
     { "id": "005", "topic": "门禁工具常驻化与 agent-dev-memory 改进提案", "path": "memory/log/005-agent-dev-memory-upgrade-proposal.md" },
     { "id": "006", "topic": "二次 analyze:依赖成环的断法,与宪法第六条那句的出处查证(用户选定改宪法)", "path": "memory/log/006-20261015-analyze-error-round2.md" },
     { "id": "007", "topic": "F-001 落地:实证本体无不可移除属性,承认原版拦截(路线 A)", "path": "memory/log/007-20261016-f001-vanilla-interception.md" },
-    { "id": "008", "topic": "批量修订批次:1 个 error + 9 个 warning 一次改完,6 条 note 留待确认", "path": "memory/log/008-20261016-batch-revision-scope.md" }
+    { "id": "008", "topic": "批量修订批次:1 个 error + 9 个 warning 一次改完,6 条 note 留待确认", "path": "memory/log/008-20261016-batch-revision-scope.md" },
+    { "id": "009", "topic": "四轮 analyze:F-018 选运行期前置(修法 a)而非独立任务,其余 22 项批量修完,新增 T046", "path": "memory/log/009-20261016-analyze-round4-batch-revision.md" }
   ],
   "memoryStores": {
     "facts": "memory/facts/INDEX.json",
