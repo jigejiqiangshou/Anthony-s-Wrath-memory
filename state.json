@@ -1,16 +1,16 @@
 {
   "schema": 2,
-  "updated": "2026-10-16T01:38:40+08:00",
-  "focus": "四轮 analyze 的批量修订已落盘并提交:specs 层 db482e6(spec/plan/tasks),memory 层与顶层 .gitignore 同轮提交;F-018 按修法 a 处理,任务数 45→46,三条门禁全绿。当前唯一硬阻塞是基础 mod 未装进游戏 mods/。",
+  "updated": "2026-10-16T01:42:30+08:00",
+  "focus": "四轮 analyze 的批量修订已提交且工作区干净:specs db482e6 / memory 3c89146 / 顶层 b0c869b,gitlink 与各层 HEAD 逐一对应;三条门禁全绿。当前唯一硬阻塞是基础 mod 未装进游戏 mods/;推送需在普通终端执行(本沙箱无可用 HTTPS 凭据)。",
   "blockers": [
     "游戏目录下没有 mods/ 文件夹:ModTheSpire 启动器在,但 BaseMod / StSLib 未安装;T004 起的一切游戏内任务都卡在这一步,只能由人工安装(Steam 创意工坊或手动放 jar),本沙箱不代劳",
-    "这批改动已按宪法第九条提交:specs 层 db482e6 → memory 层 → 顶层一次提交推进两个指针;但尚未推送到 GitHub(沙箱连不上 GitHub,推送需在普通终端执行),云端复原验证(克隆顶层 + 核对三行 gitlink 哈希)同样待做",
+    "提交已完成、工作区干净,但**推送未完成**:git push 在本沙箱报 `schannel: AcquireCredentialsHandle failed: SEC_E_NO_CREDENTIALS`(无可用 HTTPS 凭据,非网络超时);需在普通终端推送。待推:顶层 4 个提交、specs 3 个、memory 4 个(各层 origin/master 之前的旧提交也在内);云端复原验证(克隆顶层 + 核对三行 gitlink 哈希)同样待做",
     "接口名 `CustomModeMods` 是否应改为 `AddCustomModeModsSubscriber` 仍无法证实:BaseMod wiki 抓取只返回导航壳,留 T003 装上 BaseMod jar 后对照实物再定(F-012 因此未改)",
     "实现期未决的三处时序要等探针:PostDungeonInitialize 是否晚于 initializeCardPools、是否存在不经 getPurgeableCards / 净化之泉的移除路径、效果直接取牌与抽牌是否同一判定点",
     "check-artifacts.mjs 仍不查依赖先后序与成环(本轮用临时脚本核对后已删,脚本不留存);并入常驻检查器是 T043 的实现工作",
     "本沙箱下 git submodule 系列命令因 sh.exe 无法创建信号管道而一律 exit 66,只能用 plumbing 等价实现"
   ],
-  "next": "顺序执行:①人工把 ModTheSpire 加载器与 BaseMod / StSLib 装进游戏目录 mods/ 并把截图或日志存 memory/log/(这是 T004 开工前提);②按 T043 把先后序与成环检查并入常驻门禁后复跑三条;③在普通终端推送三层并做云端复原验证(本沙箱不推送);④第五轮 /speckit-analyze 复核 error 与 warning 是否清零。",
+  "next": "顺序执行:①在普通终端推送三层(顶层 4 个提交 / specs 3 个 / memory 4 个)并做云端复原验证;②人工把 ModTheSpire 加载器与 BaseMod / StSLib 装进游戏目录 mods/ 并把截图或日志存 memory/log/(这是 T004 开工前提);③按 T043 把先后序与成环检查并入常驻门禁后复跑三条;④第五轮 /speckit-analyze 复核 error 与 warning 是否清零。",
   "notes": [
     "本轮修订共 23 项:F-002..F-018、F-021..F-026;逐项口径、F-018 选修法 a 与否决 b 的四个形态、被删的临时脚本,全部记在 memory/log/009",
     "F-018 的三处落点:plan 的 Technical Context(运行期前置)、tasks 的 T004 正文(前置 + 证据记入 memory/log/)、plan 的 Constraints 与 来自规格 两节",

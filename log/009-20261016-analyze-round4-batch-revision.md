@@ -83,15 +83,20 @@ check-artifacts: exit=0 ok=true tasks=46 requirements=29 problems=[]
 
 ## 提交与下一步
 
-- **specs 层 `db482e6`**（本轮三个工件:`spec.md` / `plan.md` / `tasks.md`);memory 层与本日志随本轮一并提交,
-  顶层在同一次提交里推进 `specs/` 与 `memory/` 两个指针(宪法第九条:先层后顶层)。
-- 顶层 `.gitignore` 的两条 gradle wrapper 白名单也在本轮移除,随顶层提交。
+- **specs 层 `db482e6`**（本轮三个工件:`spec.md` / `plan.md` / `tasks.md`);
+- **memory 层 `3c89146`**（本日志 + state.json + README 归属措辞）;
+- **顶层 `b0c869b`**：一次提交同时推进 `specs/` 与 `memory/` 两个指针，并移除两条 gradle wrapper jar 白名单
+  （宪法第九条：先层后顶层）。
+- 提交后校验：三层 gitlink 与各层 HEAD 逐一相同、三层与顶层工作区全部干净；三条门禁复跑仍全绿。
+- **推送未完成**：`git push` 报 `schannel: AcquireCredentialsHandle failed: SEC_E_NO_CREDENTIALS`
+  （本沙箱无可用 HTTPS 凭据，不是网络超时）。待推：顶层 4 个提交、specs 3 个、memory 4 个
+  （含本轮之前积累的提交）；推送与云端复原验证需在普通终端执行。
 - 未纳入本批、留给下一轮:`F-012`(接口名,待 T003 对照 BaseMod jar 后定)。
 
 下一步顺序:
 
-1. **人工**把 ModTheSpire 加载器与 BaseMod、StSLib 装进游戏目录 `mods/`,截图或日志存 `memory/log/`
+1. **普通终端**推送三层并做云端复原验证(克隆顶层 + 核对三行 gitlink 哈希);
+2. **人工**把 ModTheSpire 加载器与 BaseMod、StSLib 装进游戏目录 `mods/`,截图或日志存 `memory/log/`
    (这是 T002 的运行期前置,也是 T004 开工的前提);
-2. 按门禁扩展(T043)把先后序与成环检查并入常驻检查器,再复跑三条门禁;
-3. 本批已提交但**尚未推送**(沙箱连不上 GitHub,推送需在普通终端执行),随后做云端复原验证;
+3. 按门禁扩展(T043)把先后序与成环检查并入常驻检查器,再复跑三条门禁;
 4. 第五轮 `/speckit-analyze` 复核 error 与 warning 是否清零(T046 与 F-012 两条留给它复核)。
