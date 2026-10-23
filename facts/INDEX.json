@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated": "2026-10-16",
+  "updated": "2026-10-23",
   "entries": [
     {
       "id": "f001",
@@ -73,6 +73,18 @@
       "verified": "T007 前向依赖报 MALFORMED_ARTIFACT: Dependency T009 must precede T007;spec.md 的 EC-010 引用 FR-011 致 derive-stage spec.state=invalid 且 diagnostics=[];读 lib/workflow.js:272-284 确认 tokensValid(text, true);两处修正后 select-tasks ok=true、derive-stage stage=tasked",
       "evidence": "memory/log/007-20261016-f001-vanilla-interception.md",
       "path": "memory/facts/f006-speckit-gate-hard-rules.md"
+    },
+    {
+      "id": "f007",
+      "slug": "sandbox-push-unavailable-openssl-readonly",
+      "title": "本沙箱内 git 推送不可用;远端只读核对须用 -c http.sslBackend=openssl",
+      "status": "verified",
+      "feature": null,
+      "coldStart": true,
+      "scope": "本机 Windows + Git for Windows 2.53.0 的 DSH 沙箱,远端为本项目四个 GitHub HTTPS 仓库;换机、改 SSH 远端或凭据/沙箱环境变化后需重测",
+      "verified": "2026-10-23 实测:默认 schannel 对四仓 ls-remote 均报 SEC_E_NO_CREDENTIALS;加 -c http.sslBackend=openssl 后四仓 ls-remote 成功且返回 SHA==本地 HEAD;push(两种后端)与 git credential fill 均因 sh.exe couldn't create signal pipe 而报 fatal: unable to get password from user(exit 128);Get-Command gh 无结果",
+      "evidence": "memory/log/009 §推送未完成;memory/log/010 §14;0a 推送尝试",
+      "path": "memory/facts/f007-sandbox-push-unavailable-openssl-readonly.md"
     }
   ]
 }

@@ -159,3 +159,20 @@ R1 对 v1 提 12 条 → v2;R2 对 v2 提 3 error+5 warning → v3;R3 对 v3 提
 ## 13. 下一步
 
 新会话冷启动后执行 0a(见 §7);0a 完成、四仓 clean 后,按 §7 从 init 继续。
+
+## 14. 0a 执行结果与推送交接(2026-10-23 新会话)
+
+- **执行**:按 §7 改完三处——`AGENTS.md:5`(旧体系冻结退场+指向本条记录)、`memory/README.md:3/8`(同前,并移除 `.speckit/constitution.md` 的登记)、checker 头 2 行冻结注释;`state.json` 据实更新。
+- **A′1 核对**:AGENTS/README 中含 `.speckit/` 的行均含"退场";两文件全文无 `.specify/`、`_archive`。
+- **0b 冻结基线**:`node memory/log/check-artifacts.mjs . specs/001-anthonys-wrath` → `{"ok":true,"tasks":46,"requirements":29,"problems":[]}`,与 §3 基线一致(冻结注释不改变输出)。
+- **提交**:memory `80293d7`(README、checker、本条记录、state,4 文件 +193/−29)→ 顶层 `e064643`(AGENTS.md + memory gitlink,2 文件 +2/−2)。顶层提交前 `git add -A` 重暂存并断言三个 gitlink 各等于该层 HEAD(specs `db482e6` / memory `80293d7` / src `6f99259`),断言通过;顶层提交只含 `AGENTS.md` 与 memory gitlink,符合 0a 验收。
+- **推送未完成**:沙箱内 push 两仓均失败——`sh.exe: fatal error - couldn't create signal pipe, Win32 error 5` + `fatal: unable to get password from user`(exit 128);原因与 log/009 §推送未完成、facts/f007 一致(无可用 HTTPS 凭据,且无 `gh` CLI)。**待用户在普通终端按 memory→顶层顺序推送**,然后做 0a-push 核对:
+
+  ```powershell
+  git -C memory push origin master
+  git push origin master          # 顶层
+  ```
+
+- **远端只读核对已可用**:`git -c http.sslBackend=openssl ls-remote origin master` 四仓均成功,0a 前四仓 local==remote(top `3441bc4` / specs `db482e6` / memory `62a4644` / src `6f99259`);该环境结论升入 facts/f007。
+- **四仓工作区**:本轮提交后四仓 `status --porcelain` 全空;memory 与顶层本地领先远端(0a 提交 + 本条结果记录),待用户推送。
+- **下一步**:①用户执行上两行推送;②推送后核对四仓 `origin/master==HEAD`(0a-push);③按 §7 step1 执行 `specify init --here --force --non-interactive --ignore-agent-tools --integration dsh --script ps`,再按 step3–9 重生成规格。
