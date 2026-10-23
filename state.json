@@ -1,6 +1,6 @@
 {
   "schema": 2,
-  "updated": "2026-10-23T21:28:00+08:00",
+  "updated": "2026-10-23T21:30:00+08:00",
   "focus": "GitHub spec-kit 迁移执行完成(0a→10d):init 产物齐全(19 项 R11)、宪法重写、旧三件套归档、新 spec/plan/research/data-model/quickstart/tasks/checklist 重新生成并通过 analyze(0 CRITICAL;13 FR/5 SC/11 EC 全覆盖);specs 已提交 c229437,memory 与顶层提交在 10c/10d 完成。推送在沙箱不可执行(facts/f007),待用户普通终端按 specs→memory→顶层推送并做克隆复原验证;之后进入实现(装 mods/ 后先跑 T004 探针)。",
   "blockers": [
     "游戏目录下没有 mods/ 文件夹:ModTheSpire 启动器在,但 BaseMod / StSLib 未安装;T004 探针与之后的一切游戏内任务都卡在这一步,只能由人工安装(Steam 创意工坊或手动放 jar),本沙箱不代劳",
@@ -14,7 +14,7 @@
     "迁移定案见 memory/log/010;执行结果、偏差与提交清单见 memory/log/011",
     "0a 已于 2026-10-23 执行并由用户推送(memory 80293d7/1c18710、顶层 e064643/b17fcd3);四仓 ls-remote 复核通过",
     "0a 后执行:specify init 1.2.3.dev0(R11 19 项齐全、10 个 speckit-* 技能即时可用、无需重启 DSH)、宪法重写(9 条原则/10 违规判定/1 版本行/Testing Strategy 0 命中)、旧三件套归档 specs/_archive(与 db482e6 三对 blob 相等)、spec 5 US/13 FR/5 SC/11 EC/17 假设、plan 四节+九字段+10 项 PASS、tasks 41 任务/8 Phase、analyze 自检 0 CRITICAL",
-    "specs 本轮提交 c229437(11 文件,+1009/−278);memory 与顶层提交见 git log;10a 已删 .speckit/、.specify/ 入库、AGENTS.md:5 指向 .specify/memory/constitution.md、.gitignore 删 .speckit/cache/ 行",
+    "specs 本轮提交 c229437(11 文件,+1009/−278);memory 本轮提交 3df2a38(README 终稿/f002+f006 stale/删 checker/log-011/state)+ 本次哈希补记提交;顶层本轮提交 64e31ca(.specify 入库/删 .speckit/指针推进)+ 本次指针提交;沙箱内三次 push 均 exit 128,待用户普通终端按 specs→memory→顶层推送(log/011 §6)",
     "脚本执行注意:本机 Windows PowerShell 5.1 默认执行策略拒绝未签名脚本;spec-kit 脚本统一以 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File <脚本> -Json` 调用(log/011 §2.3)",
     "沙箱推送不可用(facts/f007);推送顺序恒为 specs→memory→顶层;顶层每次提交前 `git add -A` 重暂存并断言三 gitlink==各层 HEAD",
     "T043/T044/T045 与 005 提案停投(冻结退场);旧 checker 已删除,门禁由 /speckit-analyze + checklists/ 承担",

@@ -54,3 +54,23 @@
 1. **用户普通终端推送**(顺序固定):`git -C specs push origin master` → `git -C memory push origin master` → 顶层 `git push origin master`。
 2. 推送后复核四仓 `origin/master == HEAD`,并在普通终端做 `git clone --recurse-submodules` 复原验证(step11)。
 3. 游戏目录 `mods/` 装好 ModTheSpire / BaseMod / StSLib(人工);随后按 `specs/001-anthonys-wrath/tasks.md` 从 T001 开工,**实现前先跑 T004 时序探针**。
+
+## 6. 最终提交哈希与推送交接(补记)
+
+本节在 10c/10d 提交之后追加,记录本文件提交时未知的哈希。
+
+| 层 | 提交 | 内容 |
+| :--- | :--- | :--- |
+| specs | `c229437` | 迁移后的规格层:旧三件套归档 + 新 spec/plan/research/data-model/quickstart/tasks/checklist |
+| memory | `3df2a38` | README 终稿、f002/f006 → stale、删旧 checker、本记录、state 收尾 |
+| 顶层 | `64e31ca` | `.specify/` 入库、删 `.speckit/`、AGENTS.md/.gitignore 定稿、specs/memory 指针推进 |
+
+推送尝试(2026-10-23 21:29,沙箱):specs / memory / 顶层三个 push **均 exit 128**(`sh.exe: couldn't create signal pipe` + `fatal: unable to get password from user`),远端仍停在 `db482e6` / `1c18710` / `b17fcd3`。**请用户在普通终端按以下顺序推送**:
+
+```powershell
+git -C specs push origin master
+git -C memory push origin master
+git push origin master
+```
+
+推送完成后:四仓 `git -c http.sslBackend=openssl ls-remote origin master` 复核 `origin/master == HEAD`,并在普通终端做 `git clone --recurse-submodules` 复原验证(step11)。
