@@ -1,3 +1,5 @@
+// 【冻结 2026-10-23】仅用于迁移前旧方言的基线核对,不得作为迁移后验收门禁(见 memory/log/010 §4.2)。
+// 迁移验收后删除;冻结基线为 ok:true tasks:46 requirements:29(0b 复跑核对此值)。
 // 文档一致性检查器 —— 对 specs/<NNN>-<slug>/ 下的 plan.md、tasks.md、spec.md 做机械核对。
 // 用途:覆盖度与引用完整性必须靠机械核对,不能靠通读(本轮实测教训见 log/004)。
 // 用法:node check-artifacts.mjs "<项目根目录>" "<specs/001-anthonys-wrath 的绝对路径>"

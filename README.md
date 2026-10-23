@@ -1,11 +1,11 @@
 # memory —— 记忆层
 
-本目录由技能 `agent-dev-memory` 治理,**不纳入 speckit 的阶段机**(speckit 只认 `.speckit/` 与 `specs/`)。
+本目录由技能 `agent-dev-memory` 治理,**不受 spec 体系阶段机约束**;旧的 speckit 方言(`.speckit/` 与旧 `specs/`)已冻结退场,迁移方案见 `memory/log/010-20261023-speckit-migration.md`。
 
 ## 归属
 
 - 只记录**已经发生的事**与**当前状态**:热状态、决策档案、过程日志、已验证事实、已排除路线。
-- 只登记 `specs/` 与 `src/` 的**路径引用**,不复制其内容;顶层配置文件(`AGENTS.md`、`.gitignore`、`.speckit/constitution.md`)同样只登记路径与含义,不复制正文。
+- 只登记 `specs/` 与 `src/` 的**路径引用**,不复制其内容;顶层配置文件(`AGENTS.md`、`.gitignore`)同样只登记路径与含义,不复制正文。
 - 方向、路线、任务分解属于 `specs/` 的 spec / plan / tasks,不写进本层。
 - 只有主 agent 写本层。
 
