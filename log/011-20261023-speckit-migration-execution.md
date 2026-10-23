@@ -74,3 +74,15 @@ git push origin master
 ```
 
 推送完成后:四仓 `git -c http.sslBackend=openssl ls-remote origin master` 复核 `origin/master == HEAD`,并在普通终端做 `git clone --recurse-submodules` 复原验证(step11)。
+
+## 7. 推送与克隆复原验证结果(2026-10-23 21:36)
+
+- **推送复核**:用户已在普通终端完成推送。`git -c http.sslBackend=openssl ls-remote origin master` 四仓结果与本地 HEAD 完全一致——顶层 `2d05095`、specs `c229437`、memory `952859e`、src `6f99259`(src 无新提交)。
+- **克隆复原验证(等价路径)**:沙箱内 `git clone --recurse-submodules` 因 `sh.exe: couldn't create signal pipe`(exit 66,与 facts/f001 同源)无法执行;改用等价路径——clone 顶层仓库 → 按 `git ls-files -s` 读三行 gitlink → 分别 clone specs / memory / src 三个远程仓库并 `checkout --detach <gitlink>`。结果:
+  - 顶层 clone HEAD = `2d05095`,与远程一致;
+  - 三行 gitlink 与各层 HEAD 完全相等,三个 gitlink 提交在对应远程仓库中均可解析(`cat-file -t` = commit)并成功检出;
+  - 归档三件套 blob 在 clone 中与旧方言基线相等(`c47fb67` / `00f66a4` / `e578656`);
+  - `.specify/`、AGENTS/README、新三件套与 `checklists/`、`specs/_archive`、`memory/state.json`、`log/011`、`src/README.md` 全部存在;`.speckit/`、旧 checker、`.dsh` 均不存在;`git ls-files .dsh` 为空;
+  - clone 中宪法计数(9 原则 / 10 违规判定 / 1 版本行 / Testing Strategy 0)、tasks(41 任务 / 8 Phase)、state 可解析(18 artifacts)、facts(7 条,f002/f006 stale)全部与本地一致;
+  - clone 工作区 clean;临时目录已删除。
+- **结论**:step11 验收通过(以等价路径完成;字面 `git clone --recurse-submodules` 需在普通终端执行)。迁移的 12 条验收判据此前已本地全 PASS,本次为云端一致性收尾;之后进入实现。

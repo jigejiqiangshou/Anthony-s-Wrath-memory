@@ -1,24 +1,25 @@
 {
   "schema": 2,
-  "updated": "2026-10-23T21:30:00+08:00",
-  "focus": "GitHub spec-kit 迁移执行完成(0a→10d):init 产物齐全(19 项 R11)、宪法重写、旧三件套归档、新 spec/plan/research/data-model/quickstart/tasks/checklist 重新生成并通过 analyze(0 CRITICAL;13 FR/5 SC/11 EC 全覆盖);specs 已提交 c229437,memory 与顶层提交在 10c/10d 完成。推送在沙箱不可执行(facts/f007),待用户普通终端按 specs→memory→顶层推送并做克隆复原验证;之后进入实现(装 mods/ 后先跑 T004 探针)。",
+  "updated": "2026-10-23T21:42:00+08:00",
+  "focus": "GitHub spec-kit 迁移全部完成:12 条验收判据本地全 PASS,推送已由用户完成并经 ls-remote 复核(四仓 origin/master==HEAD:顶层 2d05095 / specs c229437 / memory 952859e / src 6f99259),克隆复原验证通过(顶层 clone + 三层分别 checkout gitlink 的等价路径,归档 blob 与旧基线相等,见 log/011 §7)。本会话末尾把验证结果写入 log/011 §7 与 state,作为 memory→顶层一对记录提交落盘、待下一次推送;之后进入实现:装 mods/、按 tasks.md 从 T001 开工,实现前先跑 T004 探针。",
   "blockers": [
     "游戏目录下没有 mods/ 文件夹:ModTheSpire 启动器在,但 BaseMod / StSLib 未安装;T004 探针与之后的一切游戏内任务都卡在这一步,只能由人工安装(Steam 创意工坊或手动放 jar),本沙箱不代劳",
     "接口名 `CustomModeMods` 是否应改为 `AddCustomModeModsSubscriber` 仍无法证实:BaseMod wiki 抓取只返回导航壳;T008/T011 实现注册前须对照 BaseMod jar 实物确认并回写 research.md §R-003",
     "实现期的三处落点要等 T004 探针:洗牌置底介入点、效果直接取牌是否与抽牌同一判定点、清空初始牌组与开局牌组创建的先后;探针结论出来前不得按猜测实现",
-    "本沙箱下 git submodule 系列命令因 sh.exe 无法创建信号管道而一律 exit 66,只能用 plumbing 等价实现",
-    "迁移收尾推送未完成:specs(c229437)、memory、顶层各有 1 个本地提交待用户在普通终端按 specs→memory→顶层顺序推送;推送后需复核四仓 origin/master==HEAD 并做 `git clone --recurse-submodules` 复原验证(step11);沙箱内 push 会以 exit 128 失败(facts/f007)"
+    "本沙箱下 git submodule 系列命令因 sh.exe 无法创建信号管道而一律 exit 66,只能用 plumbing 等价实现;`git clone --recurse-submodules` 同样受此影响,复原验证须拆成 top clone + 逐层 clone/checkout"
   ],
-  "next": "① 用户在普通终端按 specs → memory → 顶层顺序推送三个新提交;② 推送后用 `git -c http.sslBackend=openssl ls-remote` 核对四仓 origin/master==HEAD,并做克隆复原验证(step11);③ 在游戏目录 mods/ 装好 ModTheSpire / BaseMod / StSLib(人工);④ 按 specs/001-anthonys-wrath/tasks.md 从 T001 开工,实现前先跑 T004 时序探针。",
+  "next": "① 推送本会话末尾的记录提交:`git -C memory push origin master` → 顶层 `git push origin master`;② 在游戏目录 mods/ 装好 ModTheSpire / BaseMod / StSLib(人工);③ 按 specs/001-anthonys-wrath/tasks.md 从 T001 开工,实现前先跑 T004 时序探针。",
   "notes": [
-    "迁移定案见 memory/log/010;执行结果、偏差与提交清单见 memory/log/011",
+    "迁移定案见 memory/log/010;执行、哈希与验证记录见 memory/log/011(§6 最终哈希、§7 推送与克隆验证)",
     "0a 已于 2026-10-23 执行并由用户推送(memory 80293d7/1c18710、顶层 e064643/b17fcd3);四仓 ls-remote 复核通过",
     "0a 后执行:specify init 1.2.3.dev0(R11 19 项齐全、10 个 speckit-* 技能即时可用、无需重启 DSH)、宪法重写(9 条原则/10 违规判定/1 版本行/Testing Strategy 0 命中)、旧三件套归档 specs/_archive(与 db482e6 三对 blob 相等)、spec 5 US/13 FR/5 SC/11 EC/17 假设、plan 四节+九字段+10 项 PASS、tasks 41 任务/8 Phase、analyze 自检 0 CRITICAL",
-    "specs 本轮提交 c229437(11 文件,+1009/−278);memory 本轮提交 3df2a38(README 终稿/f002+f006 stale/删 checker/log-011/state)+ 本次哈希补记提交;顶层本轮提交 64e31ca(.specify 入库/删 .speckit/指针推进)+ 本次指针提交;沙箱内三次 push 均 exit 128,待用户普通终端按 specs→memory→顶层推送(log/011 §6)",
+    "迁移本轮提交并已推送:specs c229437、memory 3df2a38+952859e、顶层 64e31ca+2d05095;ls-remote 复核四仓 origin/master==HEAD(2026-10-23 21:36)",
+    "克隆复原验证通过:top clone HEAD=2d05095、三行 gitlink==各层 HEAD 且提交在远程可解析、归档 blob 与旧基线相等、clone 内容结构/计数与本地一致、临时目录已清理(log/011 §7)",
     "脚本执行注意:本机 Windows PowerShell 5.1 默认执行策略拒绝未签名脚本;spec-kit 脚本统一以 `powershell.exe -NoProfile -ExecutionPolicy Bypass -File <脚本> -Json` 调用(log/011 §2.3)",
     "沙箱推送不可用(facts/f007);推送顺序恒为 specs→memory→顶层;顶层每次提交前 `git add -A` 重暂存并断言三 gitlink==各层 HEAD",
     "T043/T044/T045 与 005 提案停投(冻结退场);旧 checker 已删除,门禁由 /speckit-analyze + checklists/ 承担",
-    "memory/log/check-artifacts.mjs 已删除;facts f002/f006 已标 stale(coldStart→false);coldStart 仍为 true 的条目共 4 条(f001/f003/f005/f007)"
+    "memory/log/check-artifacts.mjs 已删除;facts f002/f006 已标 stale(coldStart→false);coldStart 仍为 true 的条目共 4 条(f001/f003/f005/f007)",
+    "本会话在推送复核与克隆验证后结束;末尾对 log/011 与 state 的更新作为 memory→顶层一对记录提交落盘(未推送),下次会话先推这两条再进实现"
   ],
   "artifacts": [
     { "path": ".specify/memory/constitution.md", "kind": "constitution", "note": "GitHub spec-kit 宪法:九条原则 + 10 条违规判定 + Governance + 附录 + 版本行(1.0.0 / 2026-10-13 / 2026-10-23)" },
@@ -29,9 +30,9 @@
     { "path": "specs/001-anthonys-wrath/data-model.md", "kind": "data-model", "note": "选项 / 诅咒牌 / 牌组抽牌堆 / RunState / 参照牌五个模型与需求收束表" },
     { "path": "specs/001-anthonys-wrath/quickstart.md", "kind": "validation", "note": "可复现验证流程:前置、构建、T004 探针、QS-01..QS-15、记录与完成判据" },
     { "path": "specs/001-anthonys-wrath/checklists/requirements.md", "kind": "checklist", "note": "规格质量清单:18 项全过(2026-10-23 首轮)" },
-    { "path": "specs/_archive/README.md", "kind": "archive", "note": "旧方言归档说明;三件套在 specs/_archive/001-anthonys-wrath/,blob 与 db482e6 相等" },
+    { "path": "specs/_archive/README.md", "kind": "archive", "note": "旧方言归档说明;三件套在 specs/_archive/001-anthonys-wrath/,blob 与 db482e6 相等(克隆中已复核)" },
     { "path": "memory/log/010-20261023-speckit-migration.md", "kind": "record", "note": "迁移定案:三条决策、否决替代、0a→11 步骤、映射、12 条验收、窗口期、五轮评估记录" },
-    { "path": "memory/log/011-20261023-speckit-migration-execution.md", "kind": "record", "note": "迁移执行记录(0a→10d):结果表、偏差、提交清单、迁移后状态、待办" },
+    { "path": "memory/log/011-20261023-speckit-migration-execution.md", "kind": "record", "note": "迁移执行记录:0a→10d 结果表、偏差、提交清单、§6 最终哈希、§7 推送与克隆验证结果" },
     { "path": "memory/log/009-20261016-analyze-round4-batch-revision.md", "kind": "record", "note": "旧体系最后一轮批量修订口径(23 项);成果已随 specs db482e6 提交" },
     { "path": "memory/log/005-agent-dev-memory-upgrade-proposal.md", "kind": "proposal", "note": "冻结:提案停投,暂停只记在 log/010,不再实现、不再编辑本文件" },
     { "path": "memory/facts/f005-sts1-unremovable-and-curse-pool-are-hardcoded-cardids.md", "kind": "fact", "note": "verified:杀戮尖塔 1 V2.3.4 的不可移除/诅咒池硬编码 cardID;新 research/plan 的输入" },
