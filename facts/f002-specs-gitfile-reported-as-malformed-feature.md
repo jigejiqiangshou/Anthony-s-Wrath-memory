@@ -1,3 +1,5 @@
+Status: stale — 2026-10-23 迁移到 GitHub spec-kit 后旧 helper 已退场,本条仅作历史。
+
 # f002 — specs/.git(gitfile)会被报为畸形 feature
 
 ## 结论

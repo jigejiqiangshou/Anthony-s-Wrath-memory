@@ -18,12 +18,12 @@
       "id": "f002",
       "slug": "specs-gitfile-reported-as-malformed-feature",
       "title": "specs/.git(gitfile)会被 speckit helper 报为畸形 feature,不影响阶段推导",
-      "status": "verified",
+      "status": "stale",
       "feature": null,
       "coldStart": false,
-      "scope": "specs 作为子模块挂载时,/speckit features 与 derive-stage 的诊断输出",
+      "scope": "旧 helper 已退场(2026-10-23 迁移到 GitHub spec-kit);仅作历史",
       "verified": "读 helper 源码确认 lib/workflow.js:764 对 specsRoot 直接 readdirSync 且不跳过点文件,第 771 行把任何非目录条目推入 malformed;实测 features 仍返回 ok:true、features 列表正确、nextNumber=2,derive-stage 仍返回 tasked",
-      "evidence": "specs/001-anthonys-wrath",
+      "evidence": "specs/_archive/001-anthonys-wrath",
       "path": "memory/facts/f002-specs-gitfile-reported-as-malformed-feature.md"
     },
     {
@@ -66,12 +66,12 @@
       "id": "f006",
       "slug": "speckit-gate-hard-rules",
       "title": "speckit 门禁:依赖必须前置、spec 机器 token 必须全局唯一",
-      "status": "verified",
+      "status": "stale",
       "feature": null,
-      "coldStart": true,
-      "scope": "@marcsierszen/dsh-specify-lite 当时安装版本;不含项目自建 check-artifacts.mjs",
+      "coldStart": false,
+      "scope": "旧 helper 已退场(2026-10-23 迁移到 GitHub spec-kit);仅作历史",
       "verified": "T007 前向依赖报 MALFORMED_ARTIFACT: Dependency T009 must precede T007;spec.md 的 EC-010 引用 FR-011 致 derive-stage spec.state=invalid 且 diagnostics=[];读 lib/workflow.js:272-284 确认 tokensValid(text, true);两处修正后 select-tasks ok=true、derive-stage stage=tasked",
-      "evidence": "memory/log/007-20261016-f001-vanilla-interception.md",
+      "evidence": "memory/log/010-20261023-speckit-migration.md",
       "path": "memory/facts/f006-speckit-gate-hard-rules.md"
     },
     {

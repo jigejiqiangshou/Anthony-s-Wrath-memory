@@ -1,3 +1,5 @@
+Status: stale — 2026-10-23 迁移到 GitHub spec-kit 后旧 helper 已退场,本条仅作历史。
+
 # f006 — speckit 门禁的两条硬规则:依赖必须前置、spec 机器 token 必须唯一
 
 ## 结论

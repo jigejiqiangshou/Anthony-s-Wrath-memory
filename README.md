@@ -1,6 +1,6 @@
 # memory —— 记忆层
 
-本目录由技能 `agent-dev-memory` 治理,**不受 spec 体系阶段机约束**;旧的 speckit 方言(`.speckit/` 与旧 `specs/`)已冻结退场,迁移方案见 `memory/log/010-20261023-speckit-migration.md`。
+本目录由技能 `agent-dev-memory` 治理,**不受 spec 体系阶段机约束**;项目规格采用 GitHub spec-kit(宪法在 `.specify/memory/constitution.md`,功能文档在 `specs/`),由 `/speckit-*` 技能维护。
 
 ## 归属
 
@@ -11,11 +11,11 @@
 
 ## 本项目的验证记录分三级
 
-可复现的**验证流程**写在 `specs/` 的 plan 里;验证产生的**日志**写在本层 `log/`;只有经得起复用与复读的**结论**才升入 `facts/`。
+可复现的**验证流程**写在功能的 `quickstart.md` 里;验证产生的**日志**写在本层 `log/`;只有经得起复用与复读的**结论**才升入 `facts/`。
 
 | 级 | 内容 | 位置 | 门槛 |
 | :--- | :--- | :--- | :--- |
-| 流程 | 操作步骤、预期结果,可复现路径 | `specs/<NNN>-<slug>/plan.md` 的 Testing Strategy | 无 |
+| 流程 | 操作步骤、预期结果,可复现路径 | `specs/<NNN>-<slug>/quickstart.md` | 无 |
 | 日志 | key 清单、实测记录、探针输出、逐次结果 | `memory/log/` | 发生即写,只追加 |
 | 结论 | 可被反复验证、对后续有约束力的判断 | `memory/facts/` | **严入**,宁缺勿滥 |
 
