@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated": "2026-10-13",
+  "updated": "2026-10-24",
   "entries": [
     {
       "id": "e001",
@@ -13,6 +13,18 @@
       "scope": "本工作区内所有子模块的挂载、规范化与状态查询",
       "evidence": "memory/facts/f001-git-submodule-commands-fail-in-dsh-sandbox.md",
       "path": "memory/deadends/e001-git-submodule-porcelain-unavailable.md"
+    },
+    {
+      "id": "e002",
+      "slug": "maven-package-in-dsh-sandbox",
+      "title": "在 DSH 沙箱内直接运行 mvn package 构建/验证 mod jar",
+      "status": "closed",
+      "feature": null,
+      "reason": "constraint-violation",
+      "reopenIf": "沙箱可访问 Maven 仓库(联网/代理),或工作区内提供含 maven-resources/compiler/jar 插件的离线仓库,或普通终端构建后已把 ~/.m2 复制为工作区仓库",
+      "scope": "本机 DSH 沙箱内任何依赖 Maven 插件/仓库的构建(如 mvn package);javac 直编不受影响",
+      "evidence": "memory/facts/f008-maven-build-blocked-in-dsh-sandbox.md;memory/log/012 §7-§8",
+      "path": "memory/deadends/e002-maven-package-in-dsh-sandbox.md"
     }
   ]
 }
