@@ -1,14 +1,14 @@
 {
   "schema": 2,
-  "updated": "2026-10-24T14:48:00+08:00",
-  "focus": "Phase 1 验收通过（T003 完成：用户推送 + Maven 构建 + ModTheSpire 加载均经独立复核）；T004 时序探针代码就位并通过 JDK8 javac 编译（10 个钩子 + 13 组只读补丁 + awprobe 控制台命令）；现等用户在游戏内跑 6 个采集场景并交回 %USERPROFILE%\\awprobe.log，之后回写 research R-004～R-008、T004 勾选、Phase 2 收尾并进入 US1 实现。",
+  "updated": "2026-10-24T15:28:00+08:00",
+  "focus": "T004 探针首版因 MTS 重载方法需显式 paramtypez 而加载失败（MissingParamTypesException，卡在 ModTheSpire 界面）；已修复 CardGroup.shuffle() 为 paramtypez={}，并用复刻 MTS 解析逻辑的离线自检确认全部 15 个补丁目标与 handler 签名通过（ALL 15 PATCHES OK）；现等用户推送 3 个新提交（src/memory/顶层）、重新构建安装并跑 6 个采集场景交回 awprobe.log。",
   "blockers": [
-    "T004 游戏内数据待采集：探针代码已就位，但洗牌介入点/取牌判定点/清空初始牌组时序/参照牌变化与移除行为必须由用户在游戏内跑探针后以日志确定；未出结论前不得进入 US1/US2/US3/US5 实现",
+    "T004 游戏内数据待采集：探针首版的 MTS 重载参数问题已修复并离线自检通过，但洗牌介入点/取牌判定点/清空初始牌组时序/参照牌变化与移除行为仍必须由用户重跑探针后以日志确定；未出结论前不得进入 US1/US2/US3/US5 实现",
     "「清空初始牌组」自定义选项的提供方与字符串 ID 未确认：本体与 BaseMod 均无此选项（zhs run_mods.json 44 项无此文案），推测由第三方 mod 提供；探针打印 customMods/ModList，若实测不存在该选项需回 spec 修正 EC-002",
     "本沙箱 git submodule 系列命令 exit 66（facts f001）：四层状态只能用 git -C 与 plumbing 等价操作，不得用 git submodule",
     "探针与后续构建/推送仍需用户普通终端：沙箱内 Maven 与 git 推送不可用（facts f008/f007），每轮构建与推送都要交还用户执行"
   ],
-  "next": "用户手动阶段：①按 src→specs→memory→顶层 推送本轮四仓提交；②普通终端 `mvn package` 重新构建并把 `target/anthonyswrath.jar` 放入游戏 `mods/`；③按 quickstart §3 六场景采集探针数据（新档勾选/不勾选「清空初始牌组」、第一场战斗开局、抽牌堆耗尽、搜寻类取牌、addcard CurseOfTheBell 后商店/休息点/净化之泉移除、transform CurseOfTheBell），交回 `C:\\Users\\Zhaoji\\awprobe.log`。收到日志后：结论回写 research §R-004～§R-008 与 log/016，勾选 T004，Phase 2 收尾；然后进入 US1（T007 选项类、T010 卡牌、T011 注册、T012 注入）。",
+  "next": "用户手动阶段：①推送本轮 3 个新提交（src 探针修复、memory 记录、顶层 gitlink；顺序 src→memory→顶层）；②普通终端 mvn package 重新构建并覆盖游戏 mods/anthonyswrath.jar；③删除旧 %USERPROFILE%\\awprobe.log 后启动游戏，按 quickstart §3 六场景采集（新档勾选/不勾选「清空初始牌组」、第一场战斗开局、抽牌堆耗尽、搜寻类取牌、addcard CurseOfTheBell 后商店/休息点/净化之泉移除、transform CurseOfTheBell），交回 C:\\Users\\Zhaoji\\awprobe.log。收到日志后：结论回写 research §R-004～§R-008 与 log/017，勾选 T004，Phase 2 收尾；然后进入 US1（T007 选项类、T010 卡牌、T011 注册、T012 注入）。",
   "artifacts": [
     { "path": ".specify/memory/constitution.md", "kind": "constitution", "note": "GitHub spec-kit 宪法:九条原则 + 10 条违规判定 + Governance + 附录 + 版本行(1.0.0 / 2026-10-13 / 2026-10-23);按 DEC-4a 仅在 plan 澄清平台产物口径,宪法未改" },
     { "path": "specs/001-anthonys-wrath/spec.md", "kind": "spec", "note": "5 US/14 FR/5 SC/11 EC/16 假设;US4 可见性修缮、FR-012/013 去重并新增 FR-014;FR-009 按 DEC-3a 降为可观察判据;已随 specs 6bdb595 提交" },
@@ -25,6 +25,7 @@
     { "path": "memory/log/013-20261024-session-handoff-analyze-round2-phase1.md", "kind": "record", "note": "上次会话结束移交:analyze 两轮/四项决策/Phase 1 摘要、未提交清单、下一会话入口" },
     { "path": "memory/log/014-20261024-coldstart-interface-verified-and-commit.md", "kind": "record", "note": "冷启动:BaseMod 接口名实物定案(§1)、提交前核对含 .specify stat 虚警(§2)、四层提交表(§3)、用户手动阶段交接(§4)" },
     { "path": "memory/log/015-20261024-phase1-accepted-and-t004-probe.md", "kind": "record", "note": "Phase 1 三项回报的独立核验(远端/产物/加载日志)、T004 探针前置事实、探针实现 4 文件与 javac 自测、本轮提交表、下一采集步骤" },
+    { "path": "memory/log/016-20261024-t004-probe-load-failure-and-fix.md", "kind": "record", "note": "探针首版 MTS MissingParamTypesException 的根因(shuffle 重载需显式 paramtypez={})、修复、离线补丁自检 ALL 15 PATCHES OK、本轮 3 个提交与重跑步骤" },
     { "path": "memory/log/009-20261016-analyze-round4-batch-revision.md", "kind": "record", "note": "旧体系最后一轮批量修订口径(23 项);成果已随 specs db482e6 提交" },
     { "path": "memory/log/005-agent-dev-memory-upgrade-proposal.md", "kind": "proposal", "note": "冻结:提案停投,暂停只记在 log/010,不再实现、不再编辑本文件" },
     { "path": "memory/facts/f005-sts1-unremovable-and-curse-pool-are-hardcoded-cardids.md", "kind": "fact", "note": "verified:杀戮尖塔 1 V2.3.4 的不可移除/诅咒池硬编码 cardID;新 research/plan 的输入" },
@@ -39,7 +40,7 @@
     { "path": "src/main/java/anthonyswrath/AnthonysWrathMod.java", "kind": "source", "note": "T003:入口类(@SpireInitializer + BaseMod.subscribe(this)、implements ISubscriber);已随 src f1464b3 提交并被 ModTheSpire 加载日志证实" },
     { "path": "src/main/resources/ModTheSpire.json", "kind": "resource", "note": "T003:jar 根清单;modid/version/sts_version/mts_version/dependencies 由 Maven 资源过滤填充(产物内已核对无占位符)" },
     { "path": "src/main/java/anthonyswrath/probe/TimingProbe.java", "kind": "probe", "note": "T004:自注册探针,订阅 10 个 BaseMod 钩子并启用 DevConsole/注册 awprobe 命令;T035 整体删除" },
-    { "path": "src/main/java/anthonyswrath/probe/ProbePatches.java", "kind": "probe", "note": "T004:13 组只读观测补丁(shuffle×2/initializeDeck/preBattlePrep/initializeStarterDeck/addToHand/addToTop/getPurgeableCards/removeCard×2/fountain/initializeCardPools/transformCard/emptyDeckShuffle/draw);不改行为" },
+    { "path": "src/main/java/anthonyswrath/probe/ProbePatches.java", "kind": "probe", "note": "T004:13 组只读观测补丁(shuffle×2/initializeDeck/preBattlePrep/initializeStarterDeck/addToHand/addToTop/getPurgeableCards/removeCard×2/fountain/initializeCardPools/transformCard/emptyDeckShuffle/draw);不改行为;shuffle() 用 paramtypez={} 消歧" },
     { "path": "src/main/java/anthonyswrath/probe/AwProbeCommand.java", "kind": "probe", "note": "T004:控制台命令 awprobe info|purge|cursepool|transform <cardID>|addcard <cardID>|shuffledeck" },
     { "path": "src/main/java/anthonyswrath/probe/ProbeLog.java", "kind": "probe", "note": "T004:日志双写 stdout 与 %USERPROFILE%\\awprobe.log;卡组/牌堆快照、tracked 位置、caller 栈、customMods/ModList" }
   ],
@@ -57,7 +58,8 @@
     { "id": "011", "topic": "C1 前置查明(实际已完成,工坊安装)+ analyze 第二轮 HIGH-2/HIGH-3 与剩余文档批修", "path": "memory/log/012-20261023-prereq-verified-and-analyze-round2-fixes.md" },
     { "id": "012", "topic": "用户裁定四项技术路线(DEC-1a/2b/3a/4a)并启动 Phase 1(T001/T002 完成,T003 待构建验证)", "path": "memory/log/012-20261023-prereq-verified-and-analyze-round2-fixes.md" },
     { "id": "013", "topic": "冷启动后以 libs jar 实物定案 BaseMod 接口名(f009/R-003),完成四层本地提交并把推送/构建/加载交还用户", "path": "memory/log/014-20261024-coldstart-interface-verified-and-commit.md" },
-    { "id": "014", "topic": "T004 探针方案:两个 shuffle 原语全覆盖 + addToHand/addToTop 取牌观测 + getPurgeableCards/removeCard/transformCard/initializeCardPools 只读补丁 + 10 个钩子 + awprobe 控制台命令;「清空初始牌组」改为打印实际 customMods", "path": "memory/log/015-20261024-phase1-accepted-and-t004-probe.md" }
+    { "id": "014", "topic": "T004 探针方案:两个 shuffle 原语全覆盖 + addToHand/addToTop 取牌观测 + getPurgeableCards/removeCard/transformCard/initializeCardPools 只读补丁 + 10 个钩子 + awprobe 控制台命令;「清空初始牌组」改为打印实际 customMods", "path": "memory/log/015-20261024-phase1-accepted-and-t004-probe.md" },
+    { "id": "015", "topic": "探针补丁必须离线复刻 MTS 解析逻辑自检(shuffle 重载需 paramtypez={});自检 15/15 通过后才交用户跑游戏", "path": "memory/log/016-20261024-t004-probe-load-failure-and-fix.md" }
   ],
   "notes": [
     "迁移定案见 memory/log/010;执行、哈希与验证记录见 memory/log/011(§6 最终哈希、§7 推送与克隆验证)",
@@ -80,22 +82,26 @@
     "`.specify/` 15 个 M 标记为 stat 虚警(f004):20 个受跟踪文件逐一比对 blob 全等、0 真实差异,未提交",
     "第一次四层提交(2026-10-24 00:58,已由用户推送):src f1464b3 / specs 6bdb595 / memory c071217 / top 132bd5c;四仓 ls-remote 复核一致",
     "Phase 1 验收通过(2026-10-24 14:27,已独立复核):用户 mvn package 产出 target/anthonyswrath.jar(3385 B,资源过滤后的 ModTheSpire.json 无占位符);MTS 日志 Mod list 含 anthonyswrath (0.1.0)、完成初始化、进主菜单后 Clean shutdown;T003 与 Phase 1 Checkpoint 已回填",
-    "T004 探针代码就位(2026-10-24 14:45):src/main/java/anthonyswrath/probe/ 4 文件(TimingProbe/ProbePatches/AwProbeCommand/ProbeLog),JDK8 javac exit 0 产出 20 class;待用户跑 6 个采集场景并交回 %USERPROFILE%\\awprobe.log",
+    "T004 探针代码就位(2026-10-24 14:45):src/main/java/anthonyswrath/probe/ 4 文件,JDK8 javac exit 0;待用户跑 6 个采集场景并交回 %USERPROFILE%\\awprobe.log",
     "探针设计依据(子代理反汇编 + 主 agent 复核):洗牌只有 CardGroup.shuffle()/shuffle(Random) 两原语;取牌无单一共同点,用 addToHand+addToTop 观测;PostDungeonInitialize=initializeRelicList postfix 且读档不触发;transformCard 只写 transformedCard;参照牌判定点四处已确认",
     "「清空初始牌组」非本体/非 BaseMod 提供(zhs run_mods.json 44 项无此文案),探针改为打印实际 customMods/ModList;若实测无此选项需回 spec 修 EC-002",
     "R-013 的临时关闭判负开关推迟到 T021/T032 与判负逻辑一起实现、T035 移除;T004 本版不含",
-    "本轮四层提交(2026-10-24 14:48,未推送):src 探针 / specs T003+Phase1 回填+quickstart 探针流程 / memory 本记录+state / 顶层 gitlink;推送顺序 src→specs→memory→顶层"
+    "第一轮四层提交(2026-10-24 14:48)已由用户推送(2026-10-24 15:0x 复核):top 23f631d / memory 45bbb2c / specs ccbc03b / src 4ff5f7e,四仓远端与本地全等",
+    "探针首版加载失败(2026-10-24 15:11):MTS MissingParamTypesException——CardGroup.shuffle 有重载,无参版本必须显式 `paramtypez = {}`;已修复,详见 log/016",
+    "离线补丁自检(2026-10-24 15:2x):用 MTS 自带 javassist 复刻 Patcher.patchParamTypez/getDeclaredMethod 并校验 prefix/postfix handler 参数,15/15 补丁通过(ALL 15 PATCHES OK);工具临时放 target/checker 后删除,不入库",
+    "本轮修复提交(2026-10-24 15:28,未推送):src(ProbePatches 修复) / memory(log/016+state) / 顶层(gitlink);specs 本轮无改动",
+    "教训:state.json 用整文件 write 或分块 edit 后必须立即用 UTF-8 + ConvertFrom-Json 校验;本轮一次 edit 造成 blockers/next 重复块,已重写并通过校验(log/016 未载,仅记录于本条)"
   ],
   "git": {
     "intentionallyUncommitted": [],
     "pendingPush": [
-      { "repo": "src", "ahead": 1, "head": "4ff5f7e", "commits": ["4ff5f7e Add the T004 in-game timing probe (hooks, read-only patches, awprobe console command)"] },
-      { "repo": "specs", "ahead": 1, "head": "ccbc03b", "commits": ["ccbc03b Accept Phase 1 and document the T004 probe procedure"] },
-      { "repo": "memory", "ahead": 1, "head": "本轮提交(推送前以 git -C memory log --oneline origin/master..HEAD 核对)", "commits": ["本轮:Record the phase 1 acceptance and the T004 probe implementation"] },
-      { "repo": "top", "ahead": 1, "head": "本轮提交(推送前以 git log --oneline origin/master..HEAD 核对)", "commits": ["本轮:Advance the layer pointers for the phase 1 acceptance and the T004 probe"] }
+      { "repo": "src", "ahead": 1, "head": "本轮提交(推送前以 git -C src log --oneline origin/master..HEAD 核对)", "commits": ["本轮:Fix the T004 probe for ModTheSpire overloaded-method resolution"] },
+      { "repo": "specs", "ahead": 0, "head": "ccbc03b", "commits": [] },
+      { "repo": "memory", "ahead": 1, "head": "本轮提交(推送前以 git -C memory log --oneline origin/master..HEAD 核对)", "commits": ["本轮:Record the ModTheSpire patch-load failure and the offline patch check"] },
+      { "repo": "top", "ahead": 1, "head": "本轮提交(推送前以 git log --oneline origin/master..HEAD 核对)", "commits": ["本轮:Advance the layer pointers for the T004 probe fix"] }
     ],
-    "pushOrder": ["src", "specs", "memory", "top(顶层最后)"],
-    "remoteBaseline": { "top": "132bd5c", "memory": "c071217", "specs": "6bdb595", "src": "f1464b3" }
+    "pushOrder": ["src", "memory", "top(顶层最后;specs 本轮无改动)"],
+    "remoteBaseline": { "top": "23f631d", "memory": "45bbb2c", "specs": "ccbc03b", "src": "4ff5f7e" }
   },
   "memoryStores": {
     "facts": "memory/facts/INDEX.json",
