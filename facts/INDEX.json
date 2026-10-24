@@ -229,6 +229,30 @@
       "verified": "2026-10-24:①javap -c ScryAction:对选中弃掉的牌调 player.drawPile.moveToDiscardPile(CardGroup.moveToDiscardPile→SoulGroup.discard),不经过手牌;JustLucky/CutThroughFate 的 use() 调 ScryAction;②T020 实战日志:本牌全程无 addToHand/addToTop(hand) 事件,却出现在弃牌堆(draw=0 discard=10 hand=4 exhaust=2 时 discardPile 索引 9),耗尽重洗后经置底补丁落到 drawPile 索引 0(#106~#129)",
       "evidence": "memory/log/026-20261024-t020-acceptance-and-reachability-correction.md;memory/facts/f017;memory/facts/f010",
       "path": "memory/facts/f019-nonhand-drawpile-to-discard-channel.md"
+    },
+    {
+      "id": "f020",
+      "slug": "vanilla-defeat-landing-point",
+      "title": "杀戮尖塔 1 的「本局失败」落点：isDead + new DeathScreen(getMonsters()) + currentHealth=0；不要调用 damage()",
+      "status": "verified",
+      "feature": "001-anthonys-wrath",
+      "coldStart": false,
+      "scope": "杀戮尖塔 1 桌面版 V2.3.4 (desktop-1.0.jar 12-18-2022) 战斗内的立即判负;换版本须重跑反汇编;适用于任何需要立刻结束本局的 mod 效果",
+      "verified": "2026-10-24 javap -c -p:AbstractPlayer.damage 死亡分支偏移 1102~1136(isDead=true → AbstractDungeon.deathScreen=new DeathScreen(getMonsters()) → currentHealth=0 → loseBlock),复活分支偏移 960~1101(Lizard Tail / FairyPotion / Mark of the Bloom);DeathScreen 构造器完成 screen=DEATH / incrementDeath / submitDefeatMetrics / deleteSave 等本体失败流程;AbstractDungeon.update 在 screen==DEATH 时只调 DeathScreen.update(偏移 480),战斗与操作冻结;DeathScreen.update 偏移 908 调 playDeathAnimation",
+      "evidence": "memory/log/027-20261024-us3-implementation.md;specs/001-anthonys-wrath/research.md §R-005 Implemented",
+      "path": "memory/facts/f020-vanilla-defeat-landing-point.md"
+    },
+    {
+      "id": "f021",
+      "slug": "mts-prefix-spirereturn-void-cancellation",
+      "title": "ModTheSpire 3.30.3 的 @SpirePrefixPatch 可用 SpireReturn 跳过 void 目标方法的整个方法体",
+      "status": "verified",
+      "feature": "001-anthonys-wrath",
+      "coldStart": false,
+      "scope": "本项目 libs/ModTheSpire.jar 3.30.3 + Java 8 的 prefix patch 取消/改写执行;换 MTS 版本须重验",
+      "verified": "2026-10-24 javap -p -c:SpireReturn 提供 Continue()/Return(T)/Return()(返回 SpireReturn<Void>);PrefixPatchInfo.<init> 置 canSpireReturn=true;ParameterPatchInfo.doPatch 仅当 patch 返回类型为 SpireReturn 时启用,目标为 void 时生成 if (opt.isPresent()) { return; },非 void 时生成 opt.get() 转换;离线目标自检把该 prefix 计入 22/22",
+      "evidence": "memory/log/027-20261024-us3-implementation.md;specs/001-anthonys-wrath/research.md §R-005 Implemented",
+      "path": "memory/facts/f021-mts-prefix-spirereturn-void-cancellation.md"
     }
   ]
 }

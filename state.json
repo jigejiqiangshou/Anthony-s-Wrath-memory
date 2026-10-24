@@ -1,16 +1,16 @@
 {
     "schema":  2,
-    "updated":  "2026-10-24T21:40:00+08:00",
-    "focus":  "US2 完成(T020 于 2026-10-24 21:22~21:26 探针版实测全部通过:QS-03 首洗置底、QS-04 三次重洗(两次非耗尽+一次耗尽)、QS-05 两副本成组+sinktest 4/4、QS-17 第二场重新置底;见 log/026 与 235 行 awprobe.log)。顺带证伪 20:0x 的「耗尽重洗成品不可达」判断:原版 Scry 类效果提供不经手牌的 drawPile→discard 通道,该场景可达但依赖牌组/效果;f018 转 stale、新增 f019,spec/research/quickstart 已二次修正。下一会话进入 US3(T021 入手判定),需普通终端重建 jar。",
+    "updated":  "2026-10-24T21:54:00+08:00",
+    "focus":  "US3 实现完成(T021~T024,2026-10-24 21:44~21:52):DefeatOnDraw 复刻本体的死亡分支(isDead → new DeathScreen(getMonsters()) → currentHealth=0,不调用 damage 以免复活资源拦下判负;f020),两个入手判定点落 patches/vanilla/CardGroupHandEntryPatch(addToHand + 目标为手牌的 addToTop),一次性守卫 RunState.tryMarkDefeated(),判负后 AbstractPlayerDrawPatch 以 SpireReturn 前缀整段跳过 draw(int)(f021),StartGame 订阅重置运行期标志;离线自检 javac exit 0 / MTS 补丁目标 22/22 / 守卫 8/8。T025(QS-06/07/09/15/16)待用户实测:用户已重建并放置的 jar 是 US2 版(21:43,与原 target 同哈希),需再重建一次。下一会话判读 awprobe.log 后进入 US4(T026~T028)。",
     "blockers":  [
-                     "US3~US5 尚未实现:下一会话 US3(T021 入手判定 → T022 两个判定点 → T023 一次性守卫/终局短路 → T024 接入 → T025 实测 QS-06/07/09/15/16);之后 US4(T026~T028)、US5(T029~T034)",
-                     "US3 实装后测试可行域变化:探针版「抽到本牌不判负」的前提消失,后续耗尽重洗验证须先用 Scry 把本牌从抽牌堆放入弃牌堆(quickstart §4 / log/026 §3)",
+                     "T025 待用户实测:需普通终端 mvn package 重建 jar(当前 mods/ 里的 21:43 jar 不含 US3 代码)并按 quickstart §4 的 2026-10-24 US3 段执行 QS-06/07/09/15/16,回传 awprobe.log",
+                     "US4/US5 尚未实现:US3 通过后 US4(T026~T028,T026 先收紧 RunState.isOptionSelected 的同会话残留误判)、之后 US5(T029~T034)",
                      "QS-14(EC-006 卸载 / 禁用后读旧档)未执行:已列入 T041 完整回归必做项,发布前不得跳过",
                      "诅咒池仍含本牌(T027 处理);净化之泉当前会删除本牌(T029-T031 未实现;T020 实测 #159/#160 已观察到,不是 US2 回归)",
                      "QS-01 屏幕中文文案仍无截图/记录:留 T041 或下会话顺手复核",
-                     "本沙箱 git submodule 系列命令 exit 66(facts f001);构建与推送仍需用户普通终端(沙箱内 Maven 不可用,facts f008)"
+                     "本沙箱 git submodule 系列命令 exit 66(f001);构建与推送仍需用户普通终端(沙箱内 Maven 不可用,f008)"
                  ],
-    "next":  "下个会话开始 US3(用户已确认 US2 成功后开 US3):普通终端 mvn package 重建并覆盖 mods/anthonyswrath.jar(带探针 TRACKED 修复,便于后续 tracked 判读)→ 按 tasks.md Phase 5 依次做 T021 入手判定 → T022 两个判定点(CardGroup.addToHand postfix;目标为 player.hand 的 addToTop postfix)→ T023 一次性守卫 + 终局短路(FR-010/EC-004)→ T024 入口接入/必要补丁 → T025 实测 QS-06/07/09/15/16;注意 US3 实装后「抽到本牌不判负」的前提消失,后续耗尽重洗验证须用 Scry 先把本牌放入弃牌堆(quickstart §4 步骤);之后 US4(T026~T028)→ US5(T029~T034);每轮四层提交,待推送顺序 src → specs → memory → top。",
+    "next":  "US3 代码已就位,等用户执行:普通终端 mvn package 并覆盖 mods/anthonyswrath.jar(本次构建含 US3)→ 删除旧 awprobe.log → 按 quickstart §4 的 2026-10-24 US3 段执行 T025(QS-06 自然抽到即负、QS-07 两种搜寻取牌、QS-09 多副本只结算一次+短路、QS-15 失败记录、QS-16 主动放弃不触发)→ 回传 awprobe.log。下一会话先判读 patch.deathScreen.* 是否恰好成对一次、判负后是否还有 patch.draw(int).before,写 log/028、勾选 T025 并更新本状态,然后进入 US4(T026~T028);每轮四层提交,待推送顺序 src → specs → memory → top。",
     "artifacts":  [
                       {
                           "path":  ".specify/memory/constitution.md",
@@ -30,12 +30,12 @@
                       {
                           "path":  "specs/001-anthonys-wrath/tasks.md",
                           "kind":  "tasks",
-                          "note":  "41 任务 / 8 Phase;T001~T020 完成(US1/QS-01/02/08 已通过;US2 T016~T019 实现于 2026-10-24,log/023;T020 于 21:22~21:26 实测全 PASS,log/026);US2 Checkpoint 通过;下一故事 US3;QS-14 留 T041;T012/T016/T022/T027 已按实测定稿"
+                          "note":  "41 任务 / 8 Phase;T001~T024 完成(US1/QS-01/02/08 已通过;US2 T016~T019 实现于 2026-10-24,log/023;T020 于 21:22~21:26 实测全 PASS,log/026;US3 T021~T024 于 2026-10-24 21:44~21:52 实现,log/027);US2 Checkpoint 通过;US3 T025 待用户实测;QS-14 留 T041;T012/T016/T022/T027 已按实测定稿"
                       },
                       {
                           "path":  "specs/001-anthonys-wrath/research.md",
                           "kind":  "research",
-                          "note":  "R-001..R-014;R-003 订阅 StartGame 并回写选项注册实测;R-004/R-005/R-006/R-007 两轮实测后定稿;R-004 增补 Implemented(T016~T019)、T020 Verified(三次重洗/多副本/第二场均通过)与 Reachability 两次修正(20:0x 判不可达→21:3x 实测证伪:Scry 非入手通道,f019);R-008 补候选排除/商店移除/变化行为(R-009 补卡牌实现与占位图);R-014 记录选项注册/选中状态/文本加载/卡牌注册口径与「负面：」结论"
+                          "note":  "R-001..R-014;R-003 订阅 StartGame 并回写选项注册实测;R-004/R-005/R-006/R-007 两轮实测后定稿;R-004 增补 Implemented(T016~T019)、T020 Verified(三次重洗/多副本/第二场均通过)与 Reachability 两次修正(20:0x 判不可达→21:3x 实测证伪:Scry 非入手通道,f019);R-005 增补 Implemented(T021~T024:两判定点、DeathScreen 判负落点与否决 damage()、守卫/短路、离线自检 22/22);R-008 补候选排除/商店移除/变化行为(R-009 补卡牌实现与占位图);R-014 记录选项注册/选中状态/文本加载/卡牌注册口径与「负面：」结论"
                       },
                       {
                           "path":  "specs/001-anthonys-wrath/data-model.md",
@@ -45,7 +45,7 @@
                       {
                           "path":  "specs/001-anthonys-wrath/quickstart.md",
                           "kind":  "validation",
-                          "note":  "可复现验证流程:前置、构建、T004 探针命令表与场景 1~8(标注 2026-10-24 两轮已执行)、QS-01..17;§3 命令表含 shuffleaction/drawpile/sinktest;§4 增 T020 结果表(QS-03/04/05/17 全 PASS)、日志顺序陷阱说明、T041 成品复现耗尽重洗的 Scry 步骤、净化之泉预期缺口标注"
+                          "note":  "可复现验证流程:前置、构建、T004 探针命令表与场景 1~8(标注 2026-10-24 两轮已执行)、QS-01..17;§3 命令表含 shuffleaction/drawpile/sinktest;§4 增 T020 结果表(QS-03/04/05/17 全 PASS)、日志顺序陷阱说明、T041 成品复现耗尽重洗的 Scry 步骤、净化之泉预期缺口标注、2026-10-24 US3 段(T025 六步 + patch.deathScreen.* 判读线 + US3 后耗尽重洗可行域变化)"
                       },
                       {
                           "path":  "specs/001-anthonys-wrath/checklists/requirements.md",
@@ -240,7 +240,7 @@
                       {
                           "path":  "src/main/java/anthonyswrath/probe/ProbePatches.java",
                           "kind":  "probe",
-                          "note":  "T004:16 组只读观测补丁(含 addToBottom(hand));shuffle()/shuffle(Random) 分别挂;离线 SpirePatch 自检 16/16 OK;2026-10-24 类注释补「探针 shuffle after 可能早于 mod 置底后处理,判据看最终状态」"
+                          "note":  "T004:16 组只读观测补丁(含 addToBottom(hand));shuffle()/shuffle(Random) 分别挂;离线 SpirePatch 自检 16/16 OK;2026-10-24 类注释补「探针 shuffle after 可能早于 mod 置底后处理,判据看最终状态」;US3 新增 DeathScreen 构造器 prefix/postfix 日志 patch.deathScreen.before/after(T025 判负证据)"
                       },
                       {
                           "path":  "src/main/java/anthonyswrath/probe/AwProbeCommand.java",
@@ -265,7 +265,7 @@
                       {
                           "path":  "src/main/java/anthonyswrath/run/RunState.java",
                           "kind":  "source",
-                          "note":  "T012/T014:选中判定唯一来源 = AbstractPlayer.customMods.contains(optionId) && (Settings.isTrial || trial instanceof CustomTrial);null 安全,未知标识忽略;T023 时再补 defeated/defeatGuard"
+                          "note":  "T012/T014/T023:选中判定唯一来源 = AbstractPlayer.customMods.contains(optionId) && (Settings.isTrial || trial instanceof CustomTrial);null 安全,未知标识忽略;T023 增 defeated/defeatGuard 运行期标志与 isDefeated()/tryMarkDefeated()/resetDefeatState();T026 时收紧选中判定"
                       },
                       {
                           "path":  "src/main/java/anthonyswrath/run/StartDeckInjector.java",
@@ -280,12 +280,12 @@
                       {
                           "path":  "src/main/java/anthonyswrath/patches/vanilla/package-info.java",
                           "kind":  "source",
-                          "note":  "T006 骨架 + T019 起填充:命名约定(一个原版目标一个类、只判定本牌 cardID、不出玩家可见文本);US2 的 CardGroupShufflePatch 已实现,余下由 T024/T029-T031 填充"
+                          "note":  "T006 骨架 + T019 起填充:命名约定(一个原版目标一个类、只判定本牌 cardID、不出玩家可见文本);US2 的 CardGroupShufflePatch 与 US3 的 CardGroupHandEntryPatch / AbstractPlayerDrawPatch 已实现,余下由 T029-T031 填充"
                       },
                       {
                           "path":  "src/main/java/anthonyswrath/AnthonysWrathMod.java",
                           "kind":  "source",
-                          "note":  "T003/T008/T009/T011/T012:入口类实现并订阅 EditStrings / EditCards / AddCustomModeMods / PostCreateStartingDeck 四个 BaseMod 接口;T017:US2 不新增订阅,置底由 patches/vanilla 的 @SpirePatch 自动应用,三条洗牌路径说明写入 javadoc"
+                          "note":  "T003/T008/T009/T011/T012/T024:入口类实现并订阅 EditStrings / EditCards / AddCustomModeMods / PostCreateStartingDeck / StartGame 五个 BaseMod 接口;T017:US2 不新增订阅,置底由 patches/vanilla 的 @SpirePatch 自动应用,三条洗牌路径说明写入 javadoc;T024:StartGame 只做 RunState.resetDefeatState(),判负/短路同样由 patches/vanilla 自动应用"
                       },
                       {
                           "path":  "src/main/resources/strings/anthonyswrath/eng/cards.json",
@@ -338,11 +338,6 @@
                           "note":  "US1 验收实测:QS-01/02/08 判定通过(awprobe.log 两局事件 A#4、A#8~A#12 与 B#41、B#45~B#50);QS-14 未执行→T041;含两局时间线、游戏日志佐证、非失败观察(诅咒池含本牌/首洗未置底/Loadout patch 报错/_p 立绘告警/log4j appender)、推送状态核对"
                       },
                       {
-                          "path":  "awprobe.log",
-                          "kind":  "probe-log",
-                          "note":  "2026-10-24 21:22:03~21:26:23 探针日志(GBK,235 行,43,572 bytes):新档观者+Draft+本选项,两场战斗;T020 全 PASS 证据(首洗置底、两次牌触发非耗尽重洗、一次 Scry 弃置后的耗尽重洗、双副本成组、第二场重新置底);先前 20:00 与 19:06 的日志已被覆盖(要点见 log/022、log/024);工作区根 *.log 忽略,不入库;判读见 memory/log/026"
-                      },
-                      {
                           "path":  "src/main/java/anthonyswrath/run/DrawPileOrdering.java",
                           "kind":  "source",
                           "note":  "T016/T018:洗牌后置底规则;只处理 DRAW_PILE/DISCARD_PILE(含 initializeDeck 临时组)并附 player 牌堆身份兜底;多副本按洗后相对顺序成组到索引 0..k-1;组内无本牌返回 false 且不改动(EC-003)"
@@ -386,6 +381,36 @@
                           "path":  "memory/facts/f019-nonhand-drawpile-to-discard-channel.md",
                           "kind":  "fact",
                           "note":  "verified:原版 Scry 类效果可把本牌从抽牌堆直接放入弃牌堆(ScryAction→drawPile.moveToDiscardPile,不经手牌),因此「抽牌堆耗尽重洗」在成品中可达但依赖牌组/效果;T020 日志证实非入手转移+耗尽重洗置底;f018 因本条转 stale"
+                      },
+                      {
+                          "path":  "src/main/java/anthonyswrath/run/DefeatOnDraw.java",
+                          "kind":  "source",
+                          "note":  "T021:入手即判负;按 AbstractPlayer.damage 死亡分支(偏移 1102~1136)执行 isDead → new DeathScreen(getMonsters()) → currentHealth=0 → loseBlock,不调用 damage(复活资源会拦下判负,f020);tryMarkDefeated 置一次性守卫"
+                      },
+                      {
+                          "path":  "src/main/java/anthonyswrath/patches/vanilla/CardGroupHandEntryPatch.java",
+                          "kind":  "source",
+                          "note":  "T022:两个 postfix 判定点——addToHand 与目标为 player.hand 的 addToTop;只把命中本牌的调用交给 DefeatOnDraw,其它卡牌/目标组不动(离线自检命中目标方法)"
+                      },
+                      {
+                          "path":  "src/main/java/anthonyswrath/patches/vanilla/AbstractPlayerDrawPatch.java",
+                          "kind":  "source",
+                          "note":  "T023:draw(int) 的 SpireReturn 前缀;RunState.isDefeated() 时整段跳过原版方法体(EC-004 终局短路,f021)"
+                      },
+                      {
+                          "path":  "memory/log/027-20261024-us3-implementation.md",
+                          "kind":  "record",
+                          "note":  "US3 实现记录:冷启动与用户「重建和放置」核对(21:43 jar = US2 版)、T021~T024 实现口径与 DEC-026、判负落点字节码复核、离线自检 22/22 与守卫 8/8、文档回写、四层提交表、T025 待实测步骤"
+                      },
+                      {
+                          "path":  "memory/facts/f020-vanilla-defeat-landing-point.md",
+                          "kind":  "fact",
+                          "note":  "verified:本体失败落点——isDead + new DeathScreen(getMonsters()) + currentHealth=0;DeathScreen 构造器承担 screen=DEATH/失败统计/metrics/存档;否决战 damage()(复活分支);方法=javap V2.3.4"
+                      },
+                      {
+                          "path":  "memory/facts/f021-mts-prefix-spirereturn-void-cancellation.md",
+                          "kind":  "fact",
+                          "note":  "verified:MTS 3.30.3 的 @SpirePrefixPatch 可返回 SpireReturn 跳过 void 目标方法体;目标 void 时生成 if (opt.isPresent()) return;;方法=javap ParameterPatchInfo/PrefixPatchInfo/SpireReturn"
                       }
                   ],
     "decisions":  [
@@ -513,6 +538,11 @@
                           "id":  "025",
                           "topic":  "耗尽重洗可达性二次修正(推翻 DEC-023):原版 Scry 类效果提供不经手牌的 drawPile→discard 通道,该场景在成品中可达但依赖牌组/效果;T020 实测证伪,f018 转 stale、新增 f019,spec/quickstart/research 按可达口径回写;T020 全 PASS,US2 完成,下会话 US3",
                           "path":  "memory/log/026-20261024-t020-acceptance-and-reachability-correction.md"
+                      },
+                      {
+                          "id":  "026",
+                          "topic":  "US3 实现口径:判负 = 复刻本体的死亡分支(isDead + new DeathScreen(getMonsters()) + currentHealth=0),不调用 damage();入手判定 = addToHand + 目标为手牌的 addToTop;终局短路 = draw(int) 的 SpireReturn 前缀;运行期 defeated/defeatGuard 由 StartGame 重置;T025 待实测",
+                          "path":  "memory/log/027-20261024-us3-implementation.md"
                       }
                   ],
     "notes":  [
@@ -561,7 +591,12 @@
                   "可达性二次修正(2026-10-24 21:3x,推翻 DEC-023):原版 ScryAction 可把抽牌堆顶若干张牌直接 drawPile.moveToDiscardPile(不经手牌,JustLucky/CutThroughFate 等),当剩余张数≤Scry 数时底部的本牌也进入可选范围;T020 日志证实本牌无入手事件却进弃牌堆,耗尽重洗后置底(#106~#129)。故「抽牌堆耗尽重洗」在成品中可达但依赖牌组/效果;f018 转 stale,新增 f019;spec/research/quickstart 已按可达口径回写",
                   "T020 其它观察:#159/#160 净化之泉(PurificationShrine)把本牌从 masterDeck 删除——US5(T029-T031)未实现,属预期缺口且是 US5 现成样本;#6 curseCardPool 仍含本牌(T027);QS-01 屏幕中文文案仍无记录(留 T041);本轮 jar 为 19:36 构建,不含 TRACKED 修复(tracked={none}),下次重建生效",
                   "US3 交接注意:US3 实装后探针版「抽到本牌不判负」前提消失,后续验证耗尽重洗必须用 Scry 先弃置本牌(quickstart §4 步骤);US3 按 R-005 两个判定点 + FR-010 一次性守卫/终局短路实现",
-                  "推送状态(2026-10-24 21:40):本轮 specs/memory/top 各 +1 后 ahead=3、src 仍 ahead=2;推送顺序 src → specs → memory → top"
+                  "推送状态(2026-10-24 21:40):本轮 specs/memory/top 各 +1 后 ahead=3、src 仍 ahead=2;推送顺序 src → specs → memory → top",
+                  "US3 实现完成(2026-10-24 21:44~21:52,log/027 + DEC-026):`run/DefeatOnDraw`(复刻本体死亡分支,不调 damage)、`patches/vanilla/CardGroupHandEntryPatch`(addToHand + 目标为手牌的 addToTop)、`patches/vanilla/AbstractPlayerDrawPatch`(判负后 draw(int) 整段跳过)、`RunState` defeated/defeatGuard、入口类新增 StartGame 订阅重置;离线 javac exit 0、MTS 补丁目标自检 22/22、守卫离线测试 8/8",
+                  "US3 落点与方法依据升为事实:f020(本体失败落点,方法=javap V2.3.4)、f021(MTS 3.30.3 SpireReturn 前缀跳过 void 方法);探针新增 patch.deathScreen.before/after 两条日志,是 T025 判负被结算且只结算一次的直接证据(T035 随探针删除)",
+                  "用户「重建和放置已完成」核对(2026-10-24 21:43):target/anthonyswrath.jar 与 mods/anthonyswrath.jar 同哈希 6AE796FC…19912C、49117 bytes、含完整 tracked cardID;但该 jar 是 US2 版本,不含 US3 代码——T025 前必须再重建一次",
+                  "T025 判读要点:patch.deathScreen.* 应恰好成对一次;本牌入手事件(patch.addToHand / patch.addToTop(hand))之后不应再出现新的 patch.draw(int).before;QS-16(主动放弃)全程不应出现由本牌触发的 deathScreen 日志",
+                  "推送状态(2026-10-24 21:54):上一批(US2 实现/验收等)已由用户推送——origin/master 核对为 src b36c13 / specs 6857b04 / memory b0f785f / top 84e84cc;本轮 US3 四层各 1 个新提交待推送,顺序仍为 src → specs → memory → top"
               ],
     "git":  {
                 "intentionallyUncommitted":  [
@@ -570,43 +605,34 @@
                 "pendingPush":  [
                                     {
                                         "repo":  "src",
-                                        "ahead":  2,
-                                        "head":  "本轮两批提交(推送前以 git -C src log --oneline origin/master..HEAD 核对;远端 = 56fb411)",
+                                        "ahead":  1,
+                                        "head":  "d6eede6(推送前以 git -C src log --oneline origin/master..HEAD 核对;远端 = b36c13)",
                                         "commits":  [
-                                                        "本轮:Implement user story 2: put the curse at the bottom of the pile on every shuffle",
-                                                        "本轮:Fix the probe tracked card id and document the shuffle-log ordering"
+                                                        "本轮:Implement user story 3: defeat the run when the curse enters the hand"
                                                     ]
                                     },
                                     {
                                         "repo":  "specs",
-                                        "ahead":  3,
-                                        "head":  "本轮三批提交(推送前核对;远端 = 6f25c40)",
+                                        "ahead":  1,
+                                        "head":  "2fd671f(推送前核对;远端 = 6857b04)",
                                         "commits":  [
-                                                        "本轮:Record the user story 2 implementation and the T020 validation steps",
-                                                        "本轮:Clarify that the exhausted-pile reshuffle is unreachable in the finished product",
-                                                        "本轮:Record the user story 2 acceptance and correct the exhausted-reshuffle reachability"
+                                                        "本轮:Record the user story 3 implementation and the T025 validation steps"
                                                     ]
                                     },
                                     {
                                         "repo":  "memory",
-                                        "ahead":  4,
-                                        "head":  "本轮四批提交(推送前核对;远端 = b63d718)",
+                                        "ahead":  1,
+                                        "head":  "本批提交(推送前核对;远端 = b0f785f)",
                                         "commits":  [
-                                                        "本轮:Record the user story 2 implementation; add fact f017",
-                                                        "本轮:Record the user story 2 partial acceptance and the exhausted-reshuffle reachability; add fact f018",
-                                                        "本轮:Record the f018 classification ruling and fix its evidence",
-                                                        "本轮:Record the T020 acceptance; mark f018 stale and add f019"
+                                                        "本轮:Record the user story 3 implementation; add facts f020 and f021"
                                                     ]
                                     },
                                     {
                                         "repo":  "top",
-                                        "ahead":  4,
-                                        "head":  "本轮四批提交(推送前核对;远端 = 55927d4)",
+                                        "ahead":  1,
+                                        "head":  "本批提交(推送前核对;远端 = 84e84cc)",
                                         "commits":  [
-                                                        "本轮:Advance the layer pointers for the user story 2 implementation",
-                                                        "本轮:Advance the layer pointers for the user story 2 partial acceptance",
-                                                        "本轮:Advance the layer pointers for the memory classification ruling",
-                                                        "本轮:Advance the layer pointers for the user story 2 acceptance"
+                                                        "本轮:Advance the layer pointers for the user story 3 implementation"
                                                     ]
                                     }
                                 ],
@@ -617,10 +643,10 @@
                                   "top(顶层最后)"
                               ],
                 "remoteBaseline":  {
-                                       "top":  "55927d4",
-                                       "memory":  "b63d718",
-                                       "specs":  "6f25c40",
-                                       "src":  "56fb411"
+                                       "top":  "84e84cc",
+                                       "memory":  "b0f785f",
+                                       "specs":  "6857b04",
+                                       "src":  "b36c13"
                                    }
             },
     "memoryStores":  {
