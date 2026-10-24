@@ -169,6 +169,30 @@
       "verified": "awprobe.log 第二轮:masterDeck 12 含 CurseOfTheBell 时 getPurgeableCards 返回 11 不含它;商店界面 caller=ShopScreen.purchasePurge:1204,实删 caller=ShopScreen.updatePurge:329 -> player.masterDeck.removeCard(AbstractCard);transformCard(CurseOfTheBell,true) 两次结果 Parasite/Doubt(均 CURSE),自身因 getCurse()/cursePool 排除永不作为结果",
       "evidence": "memory/log/019-20261024-t004-round2-final.md",
       "path": "memory/facts/f014-reference-curse-removal-and-transform-behavior.md"
+    },
+    {
+      "id": "f015",
+      "slug": "custom-mod-option-authority-and-persistence",
+      "title": "BaseMod 5.56 自定义模式选项:构造器第二参是颜色、isDailyMod 才是持久化通道;选中判定用 AbstractPlayer.customMods + trial 门禁",
+      "status": "verified",
+      "feature": "001-anthonys-wrath",
+      "coldStart": false,
+      "scope": "本机 libs/BaseMod.jar 5.56.0 + desktop-1.0.jar 12-18-2022;换 BaseMod 或游戏补丁须重跑 javap;不适用于 2 代",
+      "verified": "2026-10-24 对两个 jar 执行 javap -p -c:CustomMod.<init>(String ID,String color,boolean isDailyMod) 内 name/description 取自 languagePack.getRunModString(ID);CustomModeScreen.getActiveDailyModIds 只收 isDailyMod=true,经 CustomTrial.addDailyMods -> AbstractPlayer.customMods;SaveFile 构造器把 AbstractPlayer.customMods 写入 custom_mods,loadPlayerSave 读档还原;updateFade 的 startOver 分支重置 trial=null/isTrial=false;判定式=customMods.contains(id) && (Settings.isTrial || trial instanceof CustomTrial),新档注入再要求 trial instanceof CustomTrial",
+      "evidence": "memory/log/021-20261024-phase2-done-and-us1-implementation.md;specs/001-anthonys-wrath/research.md §R-014",
+      "path": "memory/facts/f015-custom-mod-option-authority-and-persistence.md"
+    },
+    {
+      "id": "f016",
+      "slug": "basemod-strings-and-card-registration-rules",
+      "title": "BaseMod 5.56 文本加载从 classpath 读、不会自动加 modId 前缀;addCard(CURSE) 经 CardLibrary 最终进入随机诅咒池",
+      "status": "verified",
+      "feature": "001-anthonys-wrath",
+      "coldStart": false,
+      "scope": "本机 libs/BaseMod.jar 5.56.0 + desktop-1.0.jar 12-18-2022;「无自动前缀」「图片缺失只告警」两条与版本强相关;不适用于 2 代",
+      "verified": "2026-10-24 javap -p -c:loadCustomStringsFile = Gdx.files.internal(path).readString(UTF-8) -> loadJsonStrings;initializeTypeMaps 把 CardStrings/RunModStrings 映射到 LocalizedStrings.cards/mod;findCallingModName 是 aconst_null 桩故不会前缀 key;BaseMod.addCard 按 CardColor 入 curseToAdd,CurseCardsPatch 调 CardLibrary.add;initializeCardPools -> addCurseCards 把全部 CURSE 收进 curseCardPool;ImageMaster.loadImage 缺失时告警返回 null;语言目录取 Settings.GameLanguage.name().toLowerCase(),列表 Gdx.files.internal(...).exists() 判定回退 eng",
+      "evidence": "memory/log/021-20261024-phase2-done-and-us1-implementation.md;specs/001-anthonys-wrath/research.md §R-014",
+      "path": "memory/facts/f016-basemod-strings-and-card-registration-rules.md"
     }
   ]
 }
