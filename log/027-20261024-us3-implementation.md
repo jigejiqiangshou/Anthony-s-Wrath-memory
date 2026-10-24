@@ -85,3 +85,16 @@
 1. 普通终端 `mvn package`，把 `target/anthonyswrath.jar` 覆盖到游戏目录 `mods/`（本次构建才含 US3 代码），删除旧 `awprobe.log`。
 2. 按 `quickstart.md` §4 的 2026-10-24 US3 段执行 T025（QS-06 / QS-07 / QS-09 / QS-15 / QS-16），把 `awprobe.log` 交回。
 3. 收到日志后：判定 T025、写 `memory/log/028` 并在 tasks.md 勾选、更新 state.json；随后进入 US4（T026~T028）。
+
+## 8. 追补：QS-07 / QS-09 测试牌选择修正（2026-10-24 21:55）
+
+首版 quickstart US3 段误把「秘密技法（Secret Technique）」当作抽牌堆取牌样本。静态复核（`javap -c` V2.3.4）确认：
+
+- `SkillFromDeckToHandAction` 只取技能；本牌是 `CardType.CURSE`，Secret Technique / Secret Weapon 取不到它 ⇒ 不能作 QS-07 样本。
+- 可用的原版取牌通道（仍落在 R-005 的两个判定点内，f013 补充）：
+  - `SeekAction`（Defect「搜寻（Seek）」，取抽牌堆任意牌）：网格列出整个 drawPile，确认后 `drawPile.removeCard(card)` → `hand.addToTop(card)` ⇒ 命中 `addToTop(hand)` 判定点；
+  - `BetterDiscardPileToHandAction`（「全息影像（Hologram / 全息影像）」取弃牌堆 1 张）：`hand.addToHand(card)` → `discardPile.removeCard(card)` ⇒ 命中 `addToHand` 判定点；
+  - `MeditateAction`（冥想）沿用 f013 已实测的 `addToHand` 路径。
+- QS-09 的「同一动作内两张同时入手」推荐 `ThirdEye`（Scry 3）把只剩两张的抽牌堆两张本牌一起放入弃牌堆，再 `Meditate` 一次取两张；`Skim`（抽 3）用于「抽空到只剩两张后连续抽」的基本做法。
+- quickstart 已按上述修正（specs 第二批提交），本追补即该修正的依据记录。
+

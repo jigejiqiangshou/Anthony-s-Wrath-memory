@@ -23,6 +23,15 @@
 - 两轮游戏内探针 `awprobe.log`（2026-10-24；654 + 250 行）按 `patch.addToHand` / `patch.addToTop(hand)` / `patch.draw(int)` / `hook.PostDraw` / `patch.removeCard(obj)` 的 caller 栈归类：普通抽牌 80、临时牌 6、抽牌堆检索 2、弃牌堆检索 1、Retain 10；抽牌堆检索与弃牌堆检索的差异由 `MeditateAction` 与 `SkillFromDeckToHandAction` 两条不同调用栈直接证明。过程见 `memory/log/018`、`memory/log/019`。
 - 反汇编 `javap -p -c` 本机 `desktop-1.0.jar`：`CardGroup.addToHand`、`CardGroup.addToTop`、`CardGroup.removeCard`、`SkillFromDeckToHandAction.update`、`MeditateAction.update`、`AbstractPlayer.draw`。
 
+## 补充（2026-10-24，US3 实现期静态复核）
+
+`javap -c` 复核了两条当时没有探针样本、但 QS-07 会用到的原版取牌通道，二者仍落在上述最小判定点集内：
+
+- `SeekAction`（Defect「搜寻（Seek）」，取抽牌堆任意牌）：把整个 `drawPile` 放进 `UNSPECIFIED` 暂存组并打开选框，确认后 `drawPile.removeCard(card)` → `hand.addToTop(card)` ⇒ 命中 `addToTop` 判定点；
+- `BetterDiscardPileToHandAction`（「全息影像（Hologram）」等取弃牌堆 1 张）：`hand.addToHand(card)` → `discardPile.removeCard(card)` ⇒ 命中 `addToHand` 判定点。
+
+反例：`SkillFromDeckToHandAction`（Secret Technique / Secret Weapon）只按卡牌类型检索，诅咒类牌取不到，不能作为「取诅咒」的样本。依据见 `memory/log/027` §8。
+
 ## 适用范围
 
 杀戮尖塔 1 桌面版 **V2.3.4 (12-18-2022)**；只描述「原版及常规 mod 效果」的入手路径。换游戏版本后需重跑探针收集同样的 caller 栈再采信。结论用于「入手即判负」类功能的判定点选择（本功能 FR-008 / EC-008）。

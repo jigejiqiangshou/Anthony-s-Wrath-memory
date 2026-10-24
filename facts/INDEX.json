@@ -154,8 +154,8 @@
       "feature": "001-anthonys-wrath",
       "coldStart": false,
       "scope": "杀戮尖塔 1 V2.3.4 (12-18-2022);只覆盖实测到的原版/常规效果通道;换版本须重采",
-      "verified": "两轮 awprobe.log 按 caller 栈归类:普通抽牌 80x addToHand<-AbstractPlayer.draw:2071;临时牌 6x addToHand<-MakeTempCardInHandAction;抽牌堆检索 2x 仅 removeCard(drawPile)<-SkillFromDeckToHandAction:54/:78 + addToTop(hand)<-:55/:79;弃牌堆检索 1x addToHand<-MeditateAction:84 + removeCard(discardPile)<-:86;Retain 10x addToTop(hand)<-RestoreRetainedCardsAction;addToBottom(hand) 0 次",
-      "evidence": "memory/log/018-20261024-t004-round1-collection-addcard-fix.md;memory/log/019-20261024-t004-round2-final.md",
+      "verified": "两轮 awprobe.log 按 caller 栈归类:普通抽牌 80x addToHand<-AbstractPlayer.draw:2071;临时牌 6x addToHand<-MakeTempCardInHandAction;抽牌堆检索 2x 仅 removeCard(drawPile)<-SkillFromDeckToHandAction:54/:78 + addToTop(hand)<-:55/:79;弃牌堆检索 1x addToHand<-MeditateAction:84 + removeCard(discardPile)<-:86;Retain 10x addToTop(hand)<-RestoreRetainedCardsAction;addToBottom(hand) 0 次;2026-10-24 US3 实现期补 javap:SeekAction(抽牌堆任意牌) removeCard(drawPile)+hand.addToTop,BetterDiscardPileToHandAction(弃牌堆 1 张) hand.addToHand+removeCard(discardPile),SkillFromDeckToHandAction 只按类型检索、取不到诅咒",
+      "evidence": "memory/log/018-20261024-t004-round1-collection-addcard-fix.md;memory/log/019-20261024-t004-round2-final.md;memory/log/027-20261024-us3-implementation.md §8",
       "path": "memory/facts/f013-hand-entry-channels-and-judgment-points.md"
     },
     {

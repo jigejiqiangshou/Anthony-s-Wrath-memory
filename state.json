@@ -1,6 +1,6 @@
 {
     "schema":  2,
-    "updated":  "2026-10-24T21:54:00+08:00",
+    "updated":  "2026-10-24T21:58:00+08:00",
     "focus":  "US3 实现完成(T021~T024,2026-10-24 21:44~21:52):DefeatOnDraw 复刻本体的死亡分支(isDead → new DeathScreen(getMonsters()) → currentHealth=0,不调用 damage 以免复活资源拦下判负;f020),两个入手判定点落 patches/vanilla/CardGroupHandEntryPatch(addToHand + 目标为手牌的 addToTop),一次性守卫 RunState.tryMarkDefeated(),判负后 AbstractPlayerDrawPatch 以 SpireReturn 前缀整段跳过 draw(int)(f021),StartGame 订阅重置运行期标志;离线自检 javac exit 0 / MTS 补丁目标 22/22 / 守卫 8/8。T025(QS-06/07/09/15/16)待用户实测:用户已重建并放置的 jar 是 US2 版(21:43,与原 target 同哈希),需再重建一次。下一会话判读 awprobe.log 后进入 US4(T026~T028)。",
     "blockers":  [
                      "T025 待用户实测:需普通终端 mvn package 重建 jar(当前 mods/ 里的 21:43 jar 不含 US3 代码)并按 quickstart §4 的 2026-10-24 US3 段执行 QS-06/07/09/15/16,回传 awprobe.log",
@@ -45,7 +45,7 @@
                       {
                           "path":  "specs/001-anthonys-wrath/quickstart.md",
                           "kind":  "validation",
-                          "note":  "可复现验证流程:前置、构建、T004 探针命令表与场景 1~8(标注 2026-10-24 两轮已执行)、QS-01..17;§3 命令表含 shuffleaction/drawpile/sinktest;§4 增 T020 结果表(QS-03/04/05/17 全 PASS)、日志顺序陷阱说明、T041 成品复现耗尽重洗的 Scry 步骤、净化之泉预期缺口标注、2026-10-24 US3 段(T025 六步 + patch.deathScreen.* 判读线 + US3 后耗尽重洗可行域变化)"
+                          "note":  "可复现验证流程:前置、构建、T004 探针命令表与场景 1~8(标注 2026-10-24 两轮已执行)、QS-01..17;§3 命令表含 shuffleaction/drawpile/sinktest;§4 增 T020 结果表(QS-03/04/05/17 全 PASS)、日志顺序陷阱说明、T041 成品复现耗尽重洗的 Scry 步骤、净化之泉预期缺口标注、2026-10-24 US3 段(T025 六步 + patch.deathScreen.* 判读线 + US3 后耗尽重洗可行域变化;QS-07/09 的取牌样本按 log/027 §8 修正为 Seek/Hologram/Meditate+ThirdEye/Skim)"
                       },
                       {
                           "path":  "specs/001-anthonys-wrath/checklists/requirements.md",
@@ -120,7 +120,7 @@
                       {
                           "path":  "memory/facts/f013-hand-entry-channels-and-judgment-points.md",
                           "kind":  "fact",
-                          "note":  "verified:入手通道实测与最小判定点集——抽牌堆检索 addToTop(hand),弃牌堆取牌/抽牌 addToHand;Retain 噪声须按 cardID 过滤"
+                          "note":  "verified:入手通道实测与最小判定点集——抽牌堆检索 addToTop(hand),弃牌堆取牌/抽牌 addToHand;Retain 噪声须按 cardID 过滤;增补 SeekAction 走 addToTop、BetterDiscardPileToHandAction 走 addToHand、Secret Technique 类取不到诅咒(log/027 §8)"
                       },
                       {
                           "path":  "memory/facts/f012-basemod-console-autocomplete-replaces-argument.md",
@@ -400,7 +400,7 @@
                       {
                           "path":  "memory/log/027-20261024-us3-implementation.md",
                           "kind":  "record",
-                          "note":  "US3 实现记录:冷启动与用户「重建和放置」核对(21:43 jar = US2 版)、T021~T024 实现口径与 DEC-026、判负落点字节码复核、离线自检 22/22 与守卫 8/8、文档回写、四层提交表、T025 待实测步骤"
+                          "note":  "US3 实现记录:冷启动与用户「重建和放置」核对(21:43 jar = US2 版)、T021~T024 实现口径与 DEC-026、判负落点字节码复核、离线自检 22/22 与守卫 8/8、文档回写、四层提交表、T025 待实测步骤;§8 追补 QS-07/09 测试牌样本修正(Seek/Hologram/Meditate+ThirdEye/Skim)及依据"
                       },
                       {
                           "path":  "memory/facts/f020-vanilla-defeat-landing-point.md",
@@ -596,7 +596,8 @@
                   "US3 落点与方法依据升为事实:f020(本体失败落点,方法=javap V2.3.4)、f021(MTS 3.30.3 SpireReturn 前缀跳过 void 方法);探针新增 patch.deathScreen.before/after 两条日志,是 T025 判负被结算且只结算一次的直接证据(T035 随探针删除)",
                   "用户「重建和放置已完成」核对(2026-10-24 21:43):target/anthonyswrath.jar 与 mods/anthonyswrath.jar 同哈希 6AE796FC…19912C、49117 bytes、含完整 tracked cardID;但该 jar 是 US2 版本,不含 US3 代码——T025 前必须再重建一次",
                   "T025 判读要点:patch.deathScreen.* 应恰好成对一次;本牌入手事件(patch.addToHand / patch.addToTop(hand))之后不应再出现新的 patch.draw(int).before;QS-16(主动放弃)全程不应出现由本牌触发的 deathScreen 日志",
-                  "推送状态(2026-10-24 21:54):上一批(US2 实现/验收等)已由用户推送——origin/master 核对为 src b36c13 / specs 6857b04 / memory b0f785f / top 84e84cc;本轮 US3 四层各 1 个新提交待推送,顺序仍为 src → specs → memory → top"
+                  "推送状态(2026-10-24 21:58):上一批(US2 实现/验收等)已由用户推送——origin/master 核对为 src b36c13 / specs 6857b04 / memory b0f785f / top 84e84cc;本轮 US3 两批:src 1 / specs 2 / memory 2 / top 2 个提交待推送,顺序仍为 src → specs → memory → top",
+                  "T025 样本修正(2026-10-24 21:55,log/027 §8):秘密技法/秘密武器只检索技能/攻击,取不到诅咒系本牌;QS-07 改用 Seek(抽牌堆任意牌,addToTop)或 Hologram(弃牌堆 1 张,addToHand),QS-09 同一动作双副本用 ThirdEye(Scry 3)把两张本牌放入弃牌堆 + Meditate 一次取两张;quickstart 已按此回写,specs 第二批提交"
               ],
     "git":  {
                 "intentionallyUncommitted":  [
@@ -613,26 +614,29 @@
                                     },
                                     {
                                         "repo":  "specs",
-                                        "ahead":  1,
-                                        "head":  "2fd671f(推送前核对;远端 = 6857b04)",
+                                        "ahead":  2,
+                                        "head":  "2fd671f + 本批修正(推送前核对;远端 = 6857b04)",
                                         "commits":  [
-                                                        "本轮:Record the user story 3 implementation and the T025 validation steps"
+                                                        "本轮:Record the user story 3 implementation and the T025 validation steps",
+                                                        "本轮:Correct the T025 search-effect samples for QS-07 and QS-09"
                                                     ]
                                     },
                                     {
                                         "repo":  "memory",
-                                        "ahead":  1,
+                                        "ahead":  2,
                                         "head":  "本批提交(推送前核对;远端 = b0f785f)",
                                         "commits":  [
-                                                        "本轮:Record the user story 3 implementation; add facts f020 and f021"
+                                                        "本轮:Record the user story 3 implementation; add facts f020 and f021",
+                                                        "本轮:Record the T025 sample correction; extend f013"
                                                     ]
                                     },
                                     {
                                         "repo":  "top",
-                                        "ahead":  1,
+                                        "ahead":  2,
                                         "head":  "本批提交(推送前核对;远端 = 84e84cc)",
                                         "commits":  [
-                                                        "本轮:Advance the layer pointers for the user story 3 implementation"
+                                                        "本轮:Advance the layer pointers for the user story 3 implementation",
+                                                        "本轮:Advance the layer pointers for the T025 sample correction"
                                                     ]
                                     }
                                 ],
