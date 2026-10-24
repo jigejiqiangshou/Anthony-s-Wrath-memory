@@ -15,6 +15,8 @@
 4. FR-008/FR-010：本牌进入手中即判负，判负后不再处理抽牌 ⇒ 抽牌堆被抽空的瞬间已经是死亡，空堆上不会再有抽牌动作。
 推论：成品中不存在「弃牌堆含本牌 + 抽牌堆耗尽 → 洗弃牌堆」的时序；`ShuffleAllAction`（洗弃牌堆）分支同样遇不到本牌。用户 2026-10-24 20:02 提出，复核成立。
 
-**corroboration**：2026-10-24 20:00 探针版 `awprobe.log`（US3 未实装）显示：首洗后本牌在 drawPile 索引 0；抽牌从末位开始，本牌只会最后被抽到；第一次抽空抽牌堆时本牌在手中（探针版不判负），弃牌堆里没有它——与推论一致。
+**corroboration（只到哪一步）**：2026-10-24 20:00 探针版 `awprobe.log`（US3 未实装）已证实「首洗后本牌在 drawPile 索引 0」与「抽牌从末位开始、索引 0 为最后抽到」（#16~#19、#43、#47~#50）；**该日志没有跑到抽牌堆耗尽**（结束时 discardPile=0、无 `patch.emptyDeckShuffle`），所以「耗尽的那一刻本牌在手中」是上面的推导，不是直接观测。
 
-**后果（已回写）**：`spec.md` SC-002 / EC-001 / US2 场景 2 / Assumptions 与 `quickstart.md` QS-04 已按「成品可达 = 首洗 + 牌/遗物触发的非耗尽重洗」修订；耗尽分支作为实现约束保留并由洗牌原语补丁构造性覆盖，仅在 US3 实装前的探针版做一次实现期验证。见 `memory/log/024`。
+**为什么不是 dead-end（2026-10-24 分类裁定）**：本 skill 的契约是「No attempt, no dead end」——dead-end 只记录**真的试过并失败**的路线，`reason` 必须取自固定枚举（`api-absent` / `perf-insufficient` / `dependency-conflict` / `constraint-violation` / `conclusion-was-wrong`），且必须带 `reopenIf`。本条是在实际尝试之前由已验证机制推导出的结论，有明确方法，因此按事实入库（`status: verified`）；它「提醒未来不要重试」的作用由 `scope` 承担（成品；探针版或设计变更即失效）。若日后真的在成品/探针里尝试触发该路径并失败，再按 dead-end 契约补记（`reason: constraint-violation`，`reopenIf` 写清「US3 关闭 / 设计改为延迟判负或不置底 / 第三方 mod 或新版游戏能把牌移出抽牌堆」）。
+
+**指针（不复制 spec 文本）**：验收口径已由 spec 承载——见 `specs/001-anthonys-wrath/spec.md` 的 Assumptions、SC-002、EC-001、US2 场景 2，以及 `quickstart.md` 的 QS-04 与 §4 说明。

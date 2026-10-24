@@ -214,7 +214,7 @@
       "feature": "001-anthonys-wrath",
       "coldStart": false,
       "scope": "「安东尼之怒」成品行为(FR-006 + FR-008 + FR-010 同时生效);不适用于 US3 关闭的开发期探针版;换设计(不置底/延迟判负)即失效",
-      "verified": "由已验证前提联合推导 + 原版调用链核对(非直接实测):f010 drawPile 索引 0=底部且 draw 取末位 → 置底后本牌必为最后一张被抽;f017 EmptyDeckShuffleAction 仅在向空抽牌堆抽牌时由 DrawCardAction 入队;FR-008/FR-010 本牌入手即判负并短路后续抽牌 ⇒ 抽空瞬间已判负,空堆重洗不发生。旁证:2026-10-24 探针版 awprobe.log(US3 未实装)首洗后索引 0、抽空时本牌在手中且弃牌堆不含它,与推论一致。已回写 spec SC-002/EC-001/US2 场景 2/Assumptions 与 quickstart QS-04",
+      "verified": "由已验证前提联合推导 + 原版调用链核对(非直接实测):f010 drawPile 索引0=底部且 draw 取末位 → 置底后本牌必为最后一张被抽;f017 EmptyDeckShuffleAction 仅在向空抽牌堆抽牌时由 DrawCardAction 入队;FR-008/FR-010 本牌入手即判负并短路后续抽牌 ⇒ 抽空瞬间已判负,空堆重洗不发生。旁证只到「置底生效 + 抽牌方向」(2026-10-24 awprobe.log #16~#19/#43/#47~#50),日志未跑到耗尽;验收口径见 spec Assumptions/SC-002,本条不复制",
       "evidence": "memory/log/024-20261024-us2-t020-partial-and-exhausted-reshuffle-reachability.md;memory/facts/f010;memory/facts/f017",
       "path": "memory/facts/f018-exhausted-reshuffle-unreachable-in-final-product.md"
     }

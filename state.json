@@ -1,7 +1,7 @@
 {
     "schema":  2,
     "updated":  "2026-10-24T20:12:00+08:00",
-    "focus":  "US2 部分验收:探针版实测 QS-03(首洗后本牌在 drawPile 索引 0,awprobe.log #16~#19/#43)与牌触发非耗尽重洗一次(#47~#50)通过;用户指出并复核「抽牌堆耗尽重洗」在成品中不可达(置底 + 抽到即负的必然结果,fact f018),已回写 spec SC-002/EC-001/US2 场景 2/Assumptions 与 quickstart QS-04/T020,验收范围修订为「首洗 + 至少两次非耗尽重洗」。T020 剩余 QS-04 第二次重洗、QS-05、QS-17、awprobe sinktest 待用户执行;随后进入 US3。四仓上一批提交待推送,本轮再 +1 批。",
+    "focus":  "US2 部分验收:探针版实测 QS-03(首洗后本牌在 drawPile 索引 0,awprobe.log #16~#19/#43)与牌触发非耗尽重洗一次(#47~#50)通过;用户指出并复核「抽牌堆耗尽重洗」在成品中不可达(置底 + 抽到即负的必然结果,fact f018),验收范围修订为「首洗 + 至少两次非耗尽重洗」并回写 spec SC-002/EC-001/US2 场景 2/Assumptions 与 quickstart QS-04/T020;另按 skill 契约裁定 f018 属 facts(有方法、未实际试错,不记 dead-end),并修正其过界证据与 spec 重复(log/025)。T020 剩余 QS-04 第二次重洗、QS-05、QS-17、awprobe sinktest 待用户执行;随后进入 US3。",
     "blockers":  [
                      "US2 T020 未完成(剩 QS-04 第二次非耗尽重洗、QS-05 多副本、QS-17 第二场、sinktest;步骤见 quickstart §4 2026-10-24 US2 段);完成后才勾选 T020 并进入 US3(T021 入手判定)",
                      "US3~US5 尚未实现;US3 需注意 FR-010 终局短路与一次性守卫(T023)",
@@ -369,7 +369,12 @@
                       {
                           "path":  "memory/facts/f018-exhausted-reshuffle-unreachable-in-final-product.md",
                           "kind":  "fact",
-                          "note":  "verified:成品中「抽牌堆耗尽重洗」不可达(置底使本牌必为最后一张被抽;抽空即抽到即判负、FR-010 短路空堆重洗);成品可观测洗牌=首洗+牌/遗物触发非耗尽重洗;已回写 spec/quickstart"
+                          "note":  "verified:成品中「抽牌堆耗尽重洗」不可达(置底使本牌必为最后一张被抽;抽空即抽到即判负、FR-010 短路空堆重洗);成品可观测洗牌=首洗+牌/遗物触发非耗尽重洗;验收口径见 spec,本条不复制;2026-10-24 按 skill 契约维持 facts 而非 dead-end(log/025)"
+                      },
+                      {
+                          "path":  "memory/log/025-20261024-memory-classification-f018-and-evidence-fix.md",
+                          "kind":  "record",
+                          "note":  "记忆分类裁定:f018 属 facts 而非 dead-ends(dead-end 要求真的试过并失败;f018 有方法、未实际试错);同时修正其过界旁证(日志未跑到耗尽)与对 spec 的重复(改为指针);给出若进死路库的合规路径(e004 的前提)"
                       }
                   ],
     "decisions":  [
@@ -487,6 +492,11 @@
                           "id":  "023",
                           "topic":  "耗尽重洗成品不可达:验收范围修订为「首洗 + 至少两次非耗尽重洗」,实现不做改动(洗牌原语构造性覆盖);spec SC-002/EC-001/US2 场景 2/Assumptions 与 quickstart QS-04/T020 同步;可选探针版实现期验证",
                           "path":  "memory/log/024-20261024-us2-t020-partial-and-exhausted-reshuffle-reachability.md"
+                      },
+                      {
+                          "id":  "024",
+                          "topic":  "f018 分类裁定:维持 facts/verified(有推导方法、未实际试错,不符合 dead-end 的「试过并失败」),不记 dead-end;同时修正其过界旁证(日志未跑到耗尽)与对 spec 的重复(改为指针)",
+                          "path":  "memory/log/025-20261024-memory-classification-f018-and-evidence-fix.md"
                       }
                   ],
     "notes":  [
@@ -527,7 +537,10 @@
                   "US2 部分验收(2026-10-24 20:00~20:01,awprobe.log 73 行):QS-03 通过(#16~#19 首洗后本牌在临时组/drawPile 索引 0、#19 StartBattle 段、#43 drawpile 仍 0);QS-04 牌触发非耗尽重洗一次通过(#47 before 索引 0 → #48 探针 after 索引 4 → #50 cmd.drawpile 索引 0);Draft+本选项开局/注入/填充未见回归;curseCardPool 含本牌为 T027 预期。详见 log/024",
                   "用户 2026-10-24 提出的逻辑问题已复核成立(f018):成品中「抽牌堆耗尽重洗」不可达——置底使本牌必为最后一张被抽,抽空即把它抽入手中并判负,FR-010 短路空堆重洗;成品可观测洗牌只剩首洗与牌/遗物触发的非耗尽重洗。验收范围已按 DEC-023 修订(spec SC-002/EC-001/US2 场景 2/Assumptions、quickstart QS-04/T020、tasks T020 注)",
                   "读探针日志注意:patch.shuffle().after / patch.shuffle(Random).after 可能早于本 mod 的置底后处理(2026-10-24 #48 索引 4、随后 cmd.drawpile 索引 0);判断置底以 hook.StartBattle / patch.initializeDeck.after / patch.emptyDeckShuffle.after / awprobe drawpile 的最终状态为准;ProbeLog.TRACKED 已补完整 cardID(下次构建起 tracked 生效)",
-                  "推送核对(2026-10-24 20:0x):四仓 remote 仍为 top 55927d4 / src 56fb411 / specs 6f25c40 / memory b63d718;上一批(US2 实现)与本轮(可达性澄清)各 1 个提交待推,合计 ahead=2,顺序 src→specs→memory→top"
+                  "推送核对(2026-10-24 20:0x):四仓 remote 仍为 top 55927d4 / src 56fb411 / specs 6f25c40 / memory b63d718;上一批(US2 实现)与本轮(可达性澄清)各 1 个提交待推,合计 ahead=2,顺序 src→specs→memory→top",
+                  "记忆分类裁定(2026-10-24,log/025):f018 维持 facts/verified 而非 dead-ends——dead-end 契约要求「真的试过并失败 + reason 取固定枚举 + reopenIf」,f018 是尝试前由 f010/f017 + FR-008/010 推导出的结论,有方法;其「防重试」作用由 scope 承担。若要进死路库,须先真的去试并失败(成品观察不到含本牌的耗尽重洗,或探针版两轮耗尽验证失败),届时记 e004(constraint-violation)",
+                  "证据修正(2026-10-24,log/025):f018 原「旁证」写成耗尽时本牌在手中,但 awprobe.log 实际未跑到耗尽(drawPile=11、discardPile=0、无 emptyDeckShuffle),已降级为推导并把 spec 验收口径收敛为指针(§Memory vs spec:facts 不复制 spec 文本)",
+                  "推送状态(2026-10-24 20:12):本轮第二批(memory 分类裁定 + 顶层指针)后 memory/top ahead=3,src/specs ahead=2;顺序不变"
               ],
     "git":  {
                 "intentionallyUncommitted":  [
@@ -554,20 +567,22 @@
                                     },
                                     {
                                         "repo":  "memory",
-                                        "ahead":  2,
-                                        "head":  "本轮两批提交(推送前核对;远端 = b63d718)",
+                                        "ahead":  3,
+                                        "head":  "本轮三批提交(推送前核对;远端 = b63d718)",
                                         "commits":  [
                                                         "本轮:Record the user story 2 implementation; add fact f017",
-                                                        "本轮:Record the user story 2 partial acceptance and the exhausted-reshuffle reachability; add fact f018"
+                                                        "本轮:Record the user story 2 partial acceptance and the exhausted-reshuffle reachability; add fact f018",
+                                                        "本轮:Record the f018 classification ruling and fix its evidence"
                                                     ]
                                     },
                                     {
                                         "repo":  "top",
-                                        "ahead":  2,
-                                        "head":  "本轮两批提交(推送前核对;远端 = 55927d4)",
+                                        "ahead":  3,
+                                        "head":  "本轮三批提交(推送前核对;远端 = 55927d4)",
                                         "commits":  [
                                                         "本轮:Advance the layer pointers for the user story 2 implementation",
-                                                        "本轮:Advance the layer pointers for the user story 2 partial acceptance"
+                                                        "本轮:Advance the layer pointers for the user story 2 partial acceptance",
+                                                        "本轮:Advance the layer pointers for the memory classification ruling"
                                                     ]
                                     }
                                 ],
