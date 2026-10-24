@@ -209,14 +209,26 @@
     {
       "id": "f018",
       "slug": "exhausted-reshuffle-unreachable-in-final-product",
-      "title": "成品中「抽牌堆耗尽重洗」不可达:置底 + 抽到即负的必然结果;成品可观测洗牌只有首洗与牌/遗物触发的非耗尽重洗",
+      "title": "STALE(2026-10-24 实测证伪):原判断「成品中抽牌堆耗尽重洗不可达」只对没有从抽牌堆直接弃牌效果的牌组成立",
+      "status": "stale",
+      "feature": "001-anthonys-wrath",
+      "coldStart": false,
+      "scope": "原 scope 为「安东尼之怒」成品行为;2026-10-24 21:26 实测证伪:Scry 类效果存在不经手牌的 drawPile→discard 通道,耗尽重洗可达(见 f019)。本条仅保留作为错误判断的历史记录",
+      "verified": "原判断方法=由 f010/f017 + FR-008/FR-010 联合推导(非直接实测),漏掉「不经手牌的移出通道」这一前提;2026-10-24 21:22~21:26 T020 日志中本牌全无入手事件却出现在弃牌堆、并经耗尽重洗置底(#106~#129),结论被推翻。转 stale,修正见 f019",
+      "evidence": "memory/log/026-20261024-t020-acceptance-and-reachability-correction.md;memory/log/024(原判断经过);memory/facts/f019",
+      "path": "memory/facts/f018-exhausted-reshuffle-unreachable-in-final-product.md"
+    },
+    {
+      "id": "f019",
+      "slug": "nonhand-drawpile-to-discard-channel",
+      "title": "原版 Scry 类效果可把本牌从抽牌堆直接放入弃牌堆(不经手牌),因此「抽牌堆耗尽重洗」在成品中可达但依赖牌组/效果",
       "status": "verified",
       "feature": "001-anthonys-wrath",
       "coldStart": false,
-      "scope": "「安东尼之怒」成品行为(FR-006 + FR-008 + FR-010 同时生效);不适用于 US3 关闭的开发期探针版;换设计(不置底/延迟判负)即失效",
-      "verified": "由已验证前提联合推导 + 原版调用链核对(非直接实测):f010 drawPile 索引0=底部且 draw 取末位 → 置底后本牌必为最后一张被抽;f017 EmptyDeckShuffleAction 仅在向空抽牌堆抽牌时由 DrawCardAction 入队;FR-008/FR-010 本牌入手即判负并短路后续抽牌 ⇒ 抽空瞬间已判负,空堆重洗不发生。旁证只到「置底生效 + 抽牌方向」(2026-10-24 awprobe.log #16~#19/#43/#47~#50),日志未跑到耗尽;验收口径见 spec Assumptions/SC-002,本条不复制",
-      "evidence": "memory/log/024-20261024-us2-t020-partial-and-exhausted-reshuffle-reachability.md;memory/facts/f010;memory/facts/f017",
-      "path": "memory/facts/f018-exhausted-reshuffle-unreachable-in-final-product.md"
+      "scope": "杀戮尖塔 1 V2.3.4 Scry / 任何调用 drawPile.moveToDiscardPile 的效果;适用于「安东尼之怒」成品;无此类效果的牌组仍不可达(见 f018 stale 的适用面)",
+      "verified": "2026-10-24:①javap -c ScryAction:对选中弃掉的牌调 player.drawPile.moveToDiscardPile(CardGroup.moveToDiscardPile→SoulGroup.discard),不经过手牌;JustLucky/CutThroughFate 的 use() 调 ScryAction;②T020 实战日志:本牌全程无 addToHand/addToTop(hand) 事件,却出现在弃牌堆(draw=0 discard=10 hand=4 exhaust=2 时 discardPile 索引 9),耗尽重洗后经置底补丁落到 drawPile 索引 0(#106~#129)",
+      "evidence": "memory/log/026-20261024-t020-acceptance-and-reachability-correction.md;memory/facts/f017;memory/facts/f010",
+      "path": "memory/facts/f019-nonhand-drawpile-to-discard-channel.md"
     }
   ]
 }
