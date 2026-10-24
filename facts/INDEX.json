@@ -145,6 +145,30 @@
       "verified": "javap -p -c -constants 反汇编 BaseMod.jar:DevConsole.execute 只 trim+split 无 lowercase;depth=命令词消耗数(awprobe 恒1);autocomplete 用 tokens[last] 前缀过滤 extraOptions;AutoComplete Tab=61/→=22 调 fillInSuggestion 替换最后空格后的词并补空格,Enter=66 直接执行原文;awprobe.log #561 cmd.addcard 实参 cursepool 与该机制完全吻合;修复后离线自检 trap 前缀不再产生子命令词",
       "evidence": "memory/log/018-20261024-t004-round1-collection-addcard-fix.md",
       "path": "memory/facts/f012-basemod-console-autocomplete-replaces-argument.md"
+    },
+    {
+      "id": "f013",
+      "slug": "hand-entry-channels-and-judgment-points",
+      "title": "入手通道实测:抽牌堆检索走 addToTop(hand),弃牌堆取牌与抽牌走 addToHand;最小判定点集为两处",
+      "status": "verified",
+      "feature": "001-anthonys-wrath",
+      "coldStart": false,
+      "scope": "杀戮尖塔 1 V2.3.4 (12-18-2022);只覆盖实测到的原版/常规效果通道;换版本须重采",
+      "verified": "两轮 awprobe.log 按 caller 栈归类:普通抽牌 80x addToHand<-AbstractPlayer.draw:2071;临时牌 6x addToHand<-MakeTempCardInHandAction;抽牌堆检索 2x 仅 removeCard(drawPile)<-SkillFromDeckToHandAction:54/:78 + addToTop(hand)<-:55/:79;弃牌堆检索 1x addToHand<-MeditateAction:84 + removeCard(discardPile)<-:86;Retain 10x addToTop(hand)<-RestoreRetainedCardsAction;addToBottom(hand) 0 次",
+      "evidence": "memory/log/018-20261024-t004-round1-collection-addcard-fix.md;memory/log/019-20261024-t004-round2-final.md",
+      "path": "memory/facts/f013-hand-entry-channels-and-judgment-points.md"
+    },
+    {
+      "id": "f014",
+      "slug": "reference-curse-removal-and-transform-behavior",
+      "title": "参照牌不可移除与变化的实测:候选列表排除、商店移除=purgeable+masterDeck.removeCard、变化结果为其它随机诅咒",
+      "status": "verified",
+      "feature": "001-anthonys-wrath",
+      "coldStart": false,
+      "scope": "杀戮尖塔 1 V2.3.4 (12-18-2022);净化之泉/休息点/removeCard(String) 未实测,见 f005 反汇编;不适用于 2 代",
+      "verified": "awprobe.log 第二轮:masterDeck 12 含 CurseOfTheBell 时 getPurgeableCards 返回 11 不含它;商店界面 caller=ShopScreen.purchasePurge:1204,实删 caller=ShopScreen.updatePurge:329 -> player.masterDeck.removeCard(AbstractCard);transformCard(CurseOfTheBell,true) 两次结果 Parasite/Doubt(均 CURSE),自身因 getCurse()/cursePool 排除永不作为结果",
+      "evidence": "memory/log/019-20261024-t004-round2-final.md",
+      "path": "memory/facts/f014-reference-curse-removal-and-transform-behavior.md"
     }
   ]
 }

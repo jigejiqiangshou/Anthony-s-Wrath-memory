@@ -1,14 +1,14 @@
 {
     "schema":  2,
-    "updated":  "2026-10-24T16:25:00+08:00",
-    "focus":  "T004 第二轮采集完成分析与探针修复:R-004/R-005/R-006/R-007 的时序事实已实测并回写 research,R-008 场景 5/6 仍缺;awprobe addcard 事故根因(BaseMod 5.56 Tab/→ 补全把 extraOptions 子命令词整词填入参数位)已定位并修复,离线自检 16/16 SpirePatch + 命令自检全过;下一步等用户重建 jar 后补采场景 4补/5/6/7/8,交回 awprobe.log 即闭合 T004。",
+    "updated":  "2026-10-24T17:21:00+08:00",
+    "focus":  "T004 已完成:R-004/R-005/R-006/R-007 经两轮探针实测后定稿,R-008 补齐候选列表排除、商店移除链路与变化行为(净化之泉/休息点留实现后 QS-11);Phase 2 仅剩 T005 双语文本骨架与 T006 patches 包骨架,完成后进入 US1。",
     "blockers":  [
-                     "T004 补采待用户执行:普通终端 mvn package → 复制 target/anthonyswrath.jar 到游戏 mods/ → 按 quickstart §3 场景 4补/5/6/7/8 采集后交回 C:\\Users\\Zhaoji\\awprobe.log;R-008 与 R-004/R-005/R-006 剩余项未回写前不得进入 US1/US2/US3/US5 实现",
-                     "四仓本轮提交(未推送):src 探针修复、specs 四文件、memory 本记录+三个 fact+一个 deadend+state、顶层 gitlink;下次会话开始前由普通终端按 src → specs → memory → 顶层顺序推送(facts f007 沙箱推送不可用)",
+                     "Phase 2 收尾未完成:T005(双语文本骨架,须先核对 BaseMod 字符串加载规则)与 T006(`patches/vanilla/` 包骨架)待实现,完成前不得进入 US1",
+                     "四仓本轮提交(未推送):specs(research/tasks/quickstart)、memory(log/019 + f013/f014 + state)、顶层 gitlink;src 本轮无改动;推送前由普通终端按 specs → memory → 顶层顺序执行(facts f007 沙箱推送不可用)",
                      "本沙箱 git submodule 系列命令 exit 66(facts f001):四层状态只能用 git -C 与 plumbing 等价操作",
-                     "构建与推送仍需用户普通终端(沙箱内 Maven 不可用,facts f008):每轮 mvn package 与 git push 都交还用户执行"
+                     "构建与推送仍需用户普通终端(沙箱内 Maven 不可用,facts f008)"
                  ],
-    "next":  "下次会话(/speckit-implement 启动):①用户按 log/018 §7 重建并补采,交回 awprobe.log;②主 agent 回写 research R-004(非耗尽重洗/多副本)、R-005(弃牌堆取牌)、R-006(Draft 注入存活)、R-008(场景 5/6)并勾选 T004、写 log/019;③Phase 2 收尾(T005 文本骨架/T006 patches 包骨架);④进入 US1(T007 选项类 → T008 注册 → T009 文本 → T010 卡牌 → T011 注册 → T012 注入)。",
+    "next":  "下次会话(/speckit-implement):①T005(先核对 BaseMod 字符串加载规则:EditStringsSubscriber 与 loadCustomStringsFile / CardStrings 格式,再建 `src/main/resources/strings/anthonyswrath/` 骨架)与 T006(建 `src/main/java/anthonyswrath/patches/vanilla/` 包骨架),过 Phase 2 Checkpoint;②US1:T007 选项类 → T010 卡牌类 → T013/T009 双语文本 → T008 选项注册 → T011 卡牌注册 → T012 注入(PostCreateStartingDeck,已定稿);③每步 JDK8 javac 自检;④阶段末四层提交,交用户 `mvn package` 后按 QS-01/QS-02/QS-08 验证。",
     "artifacts":  [
                       {
                           "path":  ".specify/memory/constitution.md",
@@ -23,17 +23,17 @@
                       {
                           "path":  "specs/001-anthonys-wrath/plan.md",
                           "kind":  "plan",
-                          "note":  "四节+九字段+10 项 PASS;含运行期前置段;平台 jar 按 DEC-4a 写为 provided/compileOnly;本轮 Summary 诅咒池落点改为 StartGame 钩子"
+                          "note":  "四节+九字段+10 项 PASS;含运行期前置段;平台 jar 按 DEC-4a 写为 provided/compileOnly;Summary 诅咒池落点为 StartGame 钩子"
                       },
                       {
                           "path":  "specs/001-anthonys-wrath/tasks.md",
                           "kind":  "tasks",
-                          "note":  "41 任务 / 8 Phase;T001~T003 完成;T004 追加第二轮采集状态仍未勾选;T012 加 R-006 存活前置;T022 改为两个判定点;T027 改为 StartGame 钩子"
+                          "note":  "41 任务 / 8 Phase;T001~T004 完成(T004 于第二轮采集后勾选);Phase 2 剩 T005/T006;T012/T016/T022/T027 已按实测定稿"
                       },
                       {
                           "path":  "specs/001-anthonys-wrath/research.md",
                           "kind":  "research",
-                          "note":  "R-001..R-013;R-003 订阅改 StartGameSubscriber;R-004/R-005/R-006/R-007 已按 awprobe.log 实测回写(含 Remaining);R-008 加未覆盖 Status;风险与参考证据同步"
+                          "note":  "R-001..R-013;R-003 订阅 StartGame;R-004/R-005/R-006/R-007 两轮实测后定稿;R-008 补候选排除/商店移除/变化行为,净化之泉留 QS-11;风险与参考证据同步"
                       },
                       {
                           "path":  "specs/001-anthonys-wrath/data-model.md",
@@ -43,7 +43,7 @@
                       {
                           "path":  "specs/001-anthonys-wrath/quickstart.md",
                           "kind":  "validation",
-                          "note":  "可复现验证流程:前置、构建、T004 探针命令表(info/purge/cursepool/find/addcard/bell/transform/shuffledeck)、Tab 补全注意、drawPile 索引方向、采集场景 1~8(新增 R-006 哨兵实验与读档路径)、QS-01..17"
+                          "note":  "可复现验证流程:前置、构建、T004 探针命令表与场景 1~8(标注 2026-10-24 两轮已执行)、QS-01..17"
                       },
                       {
                           "path":  "specs/001-anthonys-wrath/checklists/requirements.md",
@@ -56,14 +56,19 @@
                           "note":  "旧方言归档说明;三件套在 specs/_archive/001-anthonys-wrath/,blob 与 db482e6 相等(克隆中已复核)"
                       },
                       {
+                          "path":  "memory/log/019-20261024-t004-round2-final.md",
+                          "kind":  "record",
+                          "note":  "第二轮采集定稿:读档路径复现、purge 候选排除、商店移除链路、transform→Parasite/Doubt、哨兵注入 Draft 存活(16 张含 AscendersBane)、shuffledeck 无参原语、Meditate 弃牌堆取牌走 addToHand、14 张耗尽重洗复现;T004 完成结论"
+                      },
+                      {
                           "path":  "memory/log/018-20261024-t004-round1-collection-addcard-fix.md",
                           "kind":  "record",
-                          "note":  "本轮核心记录:awprobe.log 654 行结构(4 局/6 战)、R-004~R-008 可结论事实、addcard 事故根因与修复、离线自检(16/16 补丁、命令自检 ALL OK)、文档回写、四层提交、下一轮补采清单"
+                          "note":  "第一轮采集:654 行结构、R-004~R-007 初步结论、addcard 控制台事故根因与修复、离线自检、探针扩展"
                       },
                       {
                           "path":  "memory/log/017-20261024-handoff-draft-option-clarified-and-probe-ready.md",
                           "kind":  "record",
-                          "note":  "上一轮交接:自定义模式无「清空初始牌组」及 Draft 等选项清单、探针成功加载证据、六场景采集清单"
+                          "note":  "自定义模式无「清空初始牌组」及 Draft 等选项清单、探针成功加载证据、六场景采集清单"
                       },
                       {
                           "path":  "memory/log/016-20261024-t004-probe-load-failure-and-fix.md",
@@ -101,9 +106,19 @@
                           "note":  "迁移定案:三条决策、否决替代、0a→11 步骤、映射、12 条验收、窗口期"
                       },
                       {
+                          "path":  "memory/facts/f014-reference-curse-removal-and-transform-behavior.md",
+                          "kind":  "fact",
+                          "note":  "verified:参照牌不可移除与变化的实测——getPurgeableCards 排除、商店移除=purgeable+masterDeck.removeCard、transformCard 结果为其它随机诅咒;净化之泉留 QS-11"
+                      },
+                      {
+                          "path":  "memory/facts/f013-hand-entry-channels-and-judgment-points.md",
+                          "kind":  "fact",
+                          "note":  "verified:入手通道实测与最小判定点集——抽牌堆检索 addToTop(hand),弃牌堆取牌/抽牌 addToHand;Retain 噪声须按 cardID 过滤"
+                      },
+                      {
                           "path":  "memory/facts/f012-basemod-console-autocomplete-replaces-argument.md",
                           "kind":  "fact",
-                          "note":  "verified:BaseMod 5.56 Tab/→ 补全用 extraOptions 候选整词覆盖当前参数;depth 语义、Enter 不采用候选、正确 extraOptions 写法"
+                          "note":  "verified:BaseMod 5.56 Tab/→ 补全用 extraOptions 候选整词覆盖当前参数;depth 语义、正确写法"
                       },
                       {
                           "path":  "memory/facts/f011-load-path-rebuilds-curse-pool-without-postdungeoninit.md",
@@ -213,22 +228,22 @@
                       {
                           "path":  "src/main/java/anthonyswrath/probe/TimingProbe.java",
                           "kind":  "probe",
-                          "note":  "T004:自注册探针,10 个 BaseMod 钩子 + DevConsole/awprobe 注册;本轮修正 PreStartGame 文案(读档也触发)并加入 R-006 哨兵注入实验(%USERPROFILE%\\awprobe.inject → PostCreateStartingDeck 注入 AscendersBane);T035 整体删除"
+                          "note":  "T004:自注册探针,10 个 BaseMod 钩子 + DevConsole/awprobe 注册 + R-006 哨兵注入实验(已用后删除);T035 整体删除"
                       },
                       {
                           "path":  "src/main/java/anthonyswrath/probe/ProbePatches.java",
                           "kind":  "probe",
-                          "note":  "T004:本轮 16 组只读观测补丁(新增 addToBottom(hand));shuffle()/shuffle(Random) 分别挂;离线 SpirePatch 自检 16/16 OK"
+                          "note":  "T004:16 组只读观测补丁(含 addToBottom(hand));shuffle()/shuffle(Random) 分别挂;离线 SpirePatch 自检 16/16 OK"
                       },
                       {
                           "path":  "src/main/java/anthonyswrath/probe/AwProbeCommand.java",
                           "kind":  "probe",
-                          "note":  "T004:本轮重写控制台命令——extraOptions 按位置分层(参数位给真实卡 ID)、卡 ID 大小写不敏感、bell 别名、find/bell 子命令、cmd.raw 记录 depth+tokens;修复 BaseMod Tab 补全误填 cursepool 事故"
+                          "note":  "T004:控制台命令(extraOptions 分层、大小写不敏感、bell 别名、find/bell、cmd.raw);修复 BaseMod Tab 补全误填事故"
                       },
                       {
                           "path":  "src/main/java/anthonyswrath/probe/ProbeLog.java",
                           "kind":  "probe",
-                          "note":  "T004:日志双写 stdout 与 %USERPROFILE%\\awprobe.log;本轮把 ids() 注释纠正为「索引 0 = 底部」(f010)"
+                          "note":  "T004:日志双写 stdout 与 %USERPROFILE%\\awprobe.log;ids() 注释为「索引 0 = 底部」"
                       }
                   ],
     "decisions":  [
@@ -299,7 +314,7 @@
                       },
                       {
                           "id":  "014",
-                          "topic":  "T004 探针方案:两个 shuffle 原语 + addToHand/addToTop 取牌观测 + getPurgeableCards/removeCard/transformCard/initializeCardPools 只读补丁 + awprobe 命令",
+                          "topic":  "T004 探针方案:两个 shuffle 原语 + 取牌观测 + 移除/变化/池补丁 + awprobe 命令",
                           "path":  "memory/log/015-20261024-phase1-accepted-and-t004-probe.md"
                       },
                       {
@@ -309,38 +324,37 @@
                       },
                       {
                           "id":  "016",
-                          "topic":  "「清空初始牌组」不存在,改为「轮抽(Draft)」等改写开局牌组选项(EC-002/FR-003/QS-08/T004 等同步)",
+                          "topic":  "「清空初始牌组」不存在,改为「轮抽(Draft)」等改写开局牌组选项",
                           "path":  "memory/log/017-20261024-handoff-draft-option-clarified-and-probe-ready.md"
                       },
                       {
                           "id":  "017",
                           "topic":  "第二轮采集定案:置底介入两个洗牌原语 + 取牌两点判定;诅咒池排除改 StartGame 钩子;awprobe 补全事故修复与 R-006 哨兵实验",
                           "path":  "memory/log/018-20261024-t004-round1-collection-addcard-fix.md"
+                      },
+                      {
+                          "id":  "018",
+                          "topic":  "T004 第二轮补采定稿:R-004~R-007 定稿,R-008 补商店/变化实测,T004 完成,Phase 2 仅剩 T005/T006",
+                          "path":  "memory/log/019-20261024-t004-round2-final.md"
                       }
                   ],
     "notes":  [
                   "迁移定案见 memory/log/010;执行与验证记录见 memory/log/011",
                   "0a 已于 2026-10-23 执行并由用户推送;四仓 ls-remote 复核通过",
-                  "迁移本轮已推送:specs c229437、memory 3df2a38+952859e、顶层 64e31ca+2d05095",
-                  "克隆复原验证通过(top clone HEAD=2d05095;三行 gitlink==各层 HEAD;归档 blob 相符)",
                   "脚本执行注意:本机 Windows PowerShell 5.1 默认执行策略拒绝未签名脚本;spec-kit 脚本统一以 powershell.exe -NoProfile -ExecutionPolicy Bypass -File 调用",
                   "沙箱推送不可用(f007);远端只读核对用 git -c http.sslBackend=openssl ls-remote origin master;顶层提交前 git add -A 并断言三 gitlink==各层 HEAD",
                   "T043/T044/T045 与 005 提案停投(冻结退场);门禁由 /speckit-analyze + checklists/ 承担",
-                  "memory/log/check-artifacts.mjs 已删除;facts f002/f006 已标 stale;coldStart 仍为 true 的条目共 4 条(f001/f003/f005/f007);f009~f012 为 coldStart:false",
-                  "C1 已查明(2026-10-23):创意工坊订阅 ModTheSpire 3.30.3 / BaseMod 5.56.0 / StSLib 2.12.0,启动器日志、加载日志与整局实跑为证",
-                  "四项技术路线决策已按用户裁定落地(2026-10-24):DEC-1a、DEC-2b、DEC-3a、DEC-4a;见 log/012 §7",
-                  "Phase 1 验收通过(2026-10-24 14:27):mvn package 产出 target/anthonyswrath.jar;MTS 日志 Mod list 含 anthonyswrath (0.1.0)、完成初始化、Clean shutdown",
-                  "T004 探针代码就位(2026-10-24 14:45):src/main/java/anthonyswrath/probe/ 4 文件,JDK8 javac exit 0",
-                  "探针首版加载失败(2026-10-24 15:11):MTS MissingParamTypesException——CardGroup.shuffle 有重载,无参版本必须显式 paramtypez = {};已修复(log/016)",
-                  "自定义模式选项全量核对(2026-10-24):run_mods.json 45 项无「清空初始牌组」;Draft 创建时牌组为空随后填充",
-                  "探针成功加载(2026-10-24 15:22/15:24):awprobe.log 有 hook.PostInitialize、DevConsole.enabled=true、registered command awprobe",
-                  "第二轮采集(2026-10-24 15:52~15:56):awprobe.log 654 行 = 1 次启动 + 4 次开局事件(新档2/读档2) + 6 场战斗;首洗在 initializeDeck 临时 DRAW_PILE 组、耗尽重洗在 discardPile;drawPile 索引0=底部(f010);取牌只走 removeCard+addToTop(hand);读档不触发 PostDungeonInitialize(f011);详见 log/018",
-                  "awprobe addcard 事故根因(2026-10-24):BaseMod 5.56 AutoComplete 的 Tab/→ 用 extraOptions 候选整词覆盖当前参数;旧 extraOptions 在参数位返回子命令,`awprobe addcard C|Cu|Cur…` + Tab 唯一候选 cursepool 被填入;已修 extraOptions 分层/大小写不敏感/bell 别名/cmd.raw,离线自检命令全过(f012)",
-                  "本轮修复与文档(2026-10-24,未推送):src 探针 4 文件;specs research/quickstart/tasks/plan;memory log/018 + f010/f011/f012 + e003 + state;顶层 gitlink",
-                  "探针新增 R-006 哨兵实验:%USERPROFILE%\\awprobe.inject 存在时,PostCreateStartingDeck 注入一张 AscendersBane、删除哨兵并记 probe.inject;用于判断注入牌是否被 Draft 填充清除",
-                  "ProbeLog.ids 旧注释「index 0 = top」错误,实际索引 0 = 底部(最后抽到),已改注释(f010)",
-                  "控制台排障兜底:BaseMod 自带 `deck add CurseOfTheBell`(走 ShowCardAndObtainEffect,与探针 masterDeck.addToTop 语义不同)",
-                  "下一轮补采清单见 quickstart §3 场景 4补/5/6/7/8 与 log/018 §7;收到 awprobe.log 后回写 R-004/R-005/R-006/R-008 剩余项并勾 T004"
+                  "memory/log/check-artifacts.mjs 已删除;facts f002/f006 已标 stale;coldStart 仍为 true 的条目共 4 条(f001/f003/f005/f007);f009~f014 为 coldStart:false",
+                  "C1 已查明(2026-10-23):创意工坊订阅 ModTheSpire 3.30.3 / BaseMod 5.56.0 / StSLib 2.12.0",
+                  "四项技术路线决策已按用户裁定落地(2026-10-24):DEC-1a、DEC-2b、DEC-3a、DEC-4a",
+                  "Phase 1 验收通过(2026-10-24 14:27):mvn package 产出 target/anthonyswrath.jar;MTS 日志 Mod list 含 anthonyswrath (0.1.0)、Clean shutdown",
+                  "第一轮采集(2026-10-24 15:52~15:56):awprobe.log 654 行/4 局/6 战;addcard 事故根因(BaseMod Tab 补全)与修复、探针扩展、16/16 离线补丁自检;见 log/018",
+                  "第一轮修复与文档已于 2026-10-24 由用户推送(src e23a11c / specs 61099ab / memory 0dac307 / top 8dbb1ea)",
+                  "第二轮采集(2026-10-24 16:55~17:16,用户按 log/018 §7 执行):awprobe.log 250 行/两次启动段",
+                  "第二轮关键结果:读档路径复现(PreStartGame floor=0 → initializeCardPools floor=4 → StartGame,无 PostDungeonInitialize);`awprobe purge` 候选不含 CurseOfTheBell;商店移除调用栈 ShopScreen.purchasePurge:1204 / updatePurge:329;transform(CurseOfTheBell) → Parasite / Doubt;哨兵注入在 Draft 填充后存活(首战 16 张含 AscendersBane);`awprobe shuffledeck` 触发无参 shuffle;Meditate 弃牌堆取牌走 addToHand;14 张耗尽重洗复现;详见 log/019",
+                  "T004 于 2026-10-24 完成(六问全部有实测答案);Phase 2 仅剩 T005 文本骨架与 T006 patches 包骨架;之后进入 US1",
+                  "R-008 未实测项:净化之泉 FountainOfCurseRemoval、休息点移除、removeCard(String) 重载——quickstart §5 允许跳过,留实现后 QS-11",
+                  "ProbeLog.ids 索引方向:索引 0 = 底部(最后抽到),末位 = 下一次抽到(f010);控制台补全注意见 f012;控制台兜底可用 BaseMod 自带 `deck add <cardID>`"
               ],
     "git":  {
                 "intentionallyUncommitted":  [
@@ -348,19 +362,11 @@
                                              ],
                 "pendingPush":  [
                                     {
-                                        "repo":  "src",
-                                        "ahead":  1,
-                                        "head":  "本轮提交(推送前以 git -C src log --oneline origin/master..HEAD 核对)",
-                                        "commits":  [
-                                                        "本轮:Fix the awprobe console command autocomplete trap and add the R-006 marker injection"
-                                                    ]
-                                    },
-                                    {
                                         "repo":  "specs",
                                         "ahead":  1,
-                                        "head":  "本轮提交(推送前核对)",
+                                        "head":  "本轮提交(推送前以 git -C specs log --oneline origin/master..HEAD 核对)",
                                         "commits":  [
-                                                        "本轮:Record the first T004 probe round and revise R-003/R-004~R-007"
+                                                        "本轮:Finalize the T004 probe conclusions and close T004"
                                                     ]
                                     },
                                     {
@@ -368,7 +374,7 @@
                                         "ahead":  1,
                                         "head":  "本轮提交(推送前核对)",
                                         "commits":  [
-                                                        "本轮:Record the T004 round-1 findings; add facts f010~f012 and deadend e003"
+                                                        "本轮:Record the T004 round-2 findings; add facts f013/f014; close T004"
                                                     ]
                                     },
                                     {
@@ -376,21 +382,20 @@
                                         "ahead":  1,
                                         "head":  "本轮提交(推送前核对)",
                                         "commits":  [
-                                                        "本轮:Advance the layer pointers for the T004 probe fixes and findings"
+                                                        "本轮:Advance the layer pointers for the T004 completion"
                                                     ]
                                     }
                                 ],
                 "pushOrder":  [
-                                  "src",
                                   "specs",
                                   "memory",
                                   "top(顶层最后)"
                               ],
                 "remoteBaseline":  {
-                                       "top":  "25c0642",
-                                       "memory":  "e888f11",
-                                       "specs":  "617d58f",
-                                       "src":  "37b7ddb"
+                                       "top":  "8dbb1ea",
+                                       "memory":  "0dac307",
+                                       "specs":  "61099ab",
+                                       "src":  "e23a11c"
                                    }
             },
     "memoryStores":  {
