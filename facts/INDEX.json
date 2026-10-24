@@ -193,6 +193,18 @@
       "verified": "2026-10-24 javap -p -c:loadCustomStringsFile = Gdx.files.internal(path).readString(UTF-8) -> loadJsonStrings;initializeTypeMaps 把 CardStrings/RunModStrings 映射到 LocalizedStrings.cards/mod;findCallingModName 是 aconst_null 桩故不会前缀 key;BaseMod.addCard 按 CardColor 入 curseToAdd,CurseCardsPatch 调 CardLibrary.add;initializeCardPools -> addCurseCards 把全部 CURSE 收进 curseCardPool;ImageMaster.loadImage 缺失时告警返回 null;语言目录取 Settings.GameLanguage.name().toLowerCase(),列表 Gdx.files.internal(...).exists() 判定回退 eng",
       "evidence": "memory/log/021-20261024-phase2-done-and-us1-implementation.md;specs/001-anthonys-wrath/research.md §R-014",
       "path": "memory/facts/f016-basemod-strings-and-card-registration-rules.md"
+    },
+    {
+      "id": "f017",
+      "slug": "vanilla-shuffle-call-sites",
+      "title": "原版 V2.3.4 全库仅 8 处 CardGroup.shuffle 调用点,所有牌堆洗牌都经两个原语;无直接对牌堆 group 的 Collections.shuffle",
+      "status": "verified",
+      "feature": "001-anthonys-wrath",
+      "coldStart": false,
+      "scope": "杀戮尖塔 1 V2.3.4 (desktop-1.0.jar 12-18-2022) 全库静态扫描;换版本须重跑;不含第三方 mod",
+      "verified": "2026-10-24 ZipArchive 读全库 7038 个 class,按常量池筛出含 CardGroup+shuffle 的 27 个候选并逐个 javap -p -c 枚举调用点:8 处 CardGroup.shuffle 中 4 处作用于战斗牌堆(initializeDeck 临时 DRAW_PILE 组/EmptyDeckShuffleAction 洗 discardPile/ShuffleAction 被 Reboot 与 DeepBreath 传 drawPile/ShuffleAllAction 洗 discardPile),另 4 处只洗 UNSPECIFIED 暂存组;全库 Collections.shuffle 无一处直接洗 drawPile/discardPile.group;两条搬运路径均按 0→尾 addToTop,故被洗组索引 0 = drawPile 索引 0 = 底部",
+      "evidence": "memory/log/023-20261024-us2-implementation.md;specs/001-anthonys-wrath/research.md §R-004 的 Implemented 段",
+      "path": "memory/facts/f017-vanilla-shuffle-call-sites.md"
     }
   ]
 }

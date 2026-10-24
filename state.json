@@ -1,15 +1,14 @@
 {
     "schema":  2,
-    "updated":  "2026-10-24T19:18:00+08:00",
-    "focus":  "US1 验收通过:QS-01/QS-02/QS-08 经 awprobe.log 两局实测判定通过(T015 勾选;QS-14 留 T041 必做),两局 masterDeck 分别 11(普通局恰好 1 张)与 16(Draft 填充后仍含 1 张)且游戏日志无本 mod 缺键/异常。US2 待下会话开始:T016 置底逻辑(两个 shuffle 原语 postfix)→ T019 补丁 → T018 多副本 → T020 实测。另:用户称已推送,但 ls-remote 核对四仓远端仍停在上一批 HEAD,需重推。",
+    "updated":  "2026-10-24T19:32:00+08:00",
+    "focus":  "US2 实现完成:T016 置底规则 run/DrawPileOrdering + T019 两个 CardGroup.shuffle 原语 postfix + T017 三条洗牌路径覆盖论证(全库静态清点) + T018 多副本成组/缺席跳过;JDK8 javac 13 源文件 exit 0、离线 MTS 补丁目标自检 18/18。游戏内 T020(QS-03/04/05/17)待用户构建后实测。四仓远端已于 19:30 前核对为与本地上一批 HEAD 一致(用户已推送),本轮新提交待推送。",
     "blockers":  [
-                     "US2~US5 尚未实现:下一会话从 T016 置底逻辑开始(T017/T018/T019 同批,T020 实测 QS-03/04/05/17)",
-                     "远端推送未生效:2026-10-24 19:1x 用 ls-remote 核对,四仓 remote master 仍等于上一批 HEAD(src 6d8affc / specs c63aa26 / memory 8cf8c4b / top 1e7320f),本地各领先 1;本轮 QS 文档提交后再 +1;需用户重推,顺序 src → specs → memory → top",
-                     "QS-14(EC-006 卸载 / 禁用后读旧档)未执行:T015 中未验,已列入 T041 完整回归必做项,发布前不得跳过",
-                     "诅咒池仍含本牌(T027 处理);首洗后本牌不在底部属 US2 未实现,勿误判为回归",
+                     "US2 游戏内实测未执行(T020:QS-03/04/05/17;步骤见 quickstart §4 的 2026-10-24 US2 段与 awprobe drawpile/shuffleaction/sinktest);US3~US5 尚未实现,US3 从 T021 入手判定开始",
+                     "QS-14(EC-006 卸载 / 禁用后读旧档)未执行:已列入 T041 完整回归必做项,发布前不得跳过",
+                     "诅咒池仍含本牌(T027 处理);US2 已实现但未实测,勿据旧日志(首洗后索引 2/1)判回归",
                      "本沙箱 git submodule 系列命令 exit 66(facts f001);构建与推送仍需用户普通终端(沙箱内 Maven 不可用,facts f008)"
                  ],
-    "next":  "下次会话(/speckit-implement)开始 US2:①T016 置底逻辑(`patches/vanilla/` 对 `CardGroup.shuffle(Random)` 与 `shuffle()` 各挂 postfix,按 R-004 把本牌移到被洗组索引 0 端=抽牌堆底部)→ T019 补丁入 `patches/vanilla/` → T018 多副本成组且相对顺序不变(找不到本牌直接跳过)→ T017 入口接入/确认覆盖三条洗牌路径 → T020 实测 QS-03(含 Draft 空开局首洗)/QS-04(含非耗尽重洗)/QS-05(多副本)/QS-17(第二场战斗);②顺手目视复核 QS-01 中文文案(「负面：安东尼之怒」+ 勾选前说明);③每步 JDK8 javac 自检;④之后按 US3(判负,两个入手判定点)→ US4(StartGame 排除诅咒池)→ US5(不可移除);⑤阶段末四层提交,并提醒用户重推未生效的提交、mvn package 后按 QS 验证。",
+    "next":  "用户侧先做 US2 实测:普通终端 mvn package 覆盖游戏 mods/anthonyswrath.jar、删除旧 awprobe.log → 按 quickstart §4 的 2026-10-24 US2 段跑 QS-03/04/05/17 + QS-01 中文文案目视复核 + awprobe sinktest(应 pass=4/4)→ 交回 awprobe.log。收到日志后:判定 T020、写 memory/log/ 记录并勾选,然后进入 US3(T021 入手判定 → T022 两个判定点 addToHand / addToTop(hand) → T023 一次性守卫与终局短路 → T024 入口接入/必要补丁 → T025 实测 QS-06/07/09/15/16);之后 US4(T026~T028)→ US5(T029~T034);阶段末四层提交(本轮已提交待推送,顺序 src → specs → memory → top)。",
     "artifacts":  [
                       {
                           "path":  ".specify/memory/constitution.md",
@@ -29,12 +28,12 @@
                       {
                           "path":  "specs/001-anthonys-wrath/tasks.md",
                           "kind":  "tasks",
-                          "note":  "41 任务 / 8 Phase;T001~T015 完成(US1 于 2026-10-24 验收:QS-01/02/08 通过,QS-14 留 T041);US2 待下会话;T012/T016/T022/T027 已按实测定稿"
+                          "note":  "41 任务 / 8 Phase;T001~T019 完成(T016~T019 于 2026-10-24 实现完成,离线自检与清点见 log/023;US1 QS-01/02/08 已通过);T020 US2 实测待用户;QS-14 留 T041;T012/T016/T022/T027 已按实测定稿"
                       },
                       {
                           "path":  "specs/001-anthonys-wrath/research.md",
                           "kind":  "research",
-                          "note":  "R-001..R-014;R-003 订阅 StartGame 并回写选项注册实测;R-004/R-005/R-006/R-007 两轮实测后定稿;R-008 补候选排除/商店移除/变化行为(R-009 补卡牌实现与占位图);新增 R-014 记录选项注册/选中状态/文本加载/卡牌注册口径、「负面：」结论与 2026-10-24 游戏内验证;风险与参考证据同步"
+                          "note":  "R-001..R-014;R-003 订阅 StartGame 并回写选项注册实测;R-004/R-005/R-006/R-007 两轮实测后定稿;R-004 增补 Implemented(T016~T019)段:作用范围、索引 0 映射的字节码复核、V2.3.4 洗牌调用点静态清点、离线补丁自检;R-008 补候选排除/商店移除/变化行为(R-009 补卡牌实现与占位图);R-014 记录选项注册/选中状态/文本加载/卡牌注册口径与「负面：」结论"
                       },
                       {
                           "path":  "specs/001-anthonys-wrath/data-model.md",
@@ -44,7 +43,7 @@
                       {
                           "path":  "specs/001-anthonys-wrath/quickstart.md",
                           "kind":  "validation",
-                          "note":  "可复现验证流程:前置、构建、T004 探针命令表与场景 1~8(标注 2026-10-24 两轮已执行)、QS-01..17;§4 已补 2026-10-24 首轮验收 QS-01/02/08 通过标注与证据位置"
+                          "note":  "可复现验证流程:前置、构建、T004 探针命令表与场景 1~8(标注 2026-10-24 两轮已执行)、QS-01..17;§3 命令表补 shuffleaction/drawpile/sinktest;§4 补 2026-10-24 首轮验收与 US2 实测步骤(QS-03/04/05/17 + QS-01 文案复核)"
                       },
                       {
                           "path":  "specs/001-anthonys-wrath/checklists/requirements.md",
@@ -244,7 +243,7 @@
                       {
                           "path":  "src/main/java/anthonyswrath/probe/AwProbeCommand.java",
                           "kind":  "probe",
-                          "note":  "T004:控制台命令(extraOptions 分层、大小写不敏感、bell 别名、find/bell、cmd.raw);修复 BaseMod Tab 补全误填事故"
+                          "note":  "T004:控制台命令(extraOptions 分层、大小写不敏感、bell 别名、find/bell、cmd.raw);修复 BaseMod Tab 补全误填事故;US2 扩展:info 增牌堆全序,新命令 drawpile/shuffleaction/sinktest(T020 用)"
                       },
                       {
                           "path":  "src/main/java/anthonyswrath/probe/ProbeLog.java",
@@ -279,12 +278,12 @@
                       {
                           "path":  "src/main/java/anthonyswrath/patches/vanilla/package-info.java",
                           "kind":  "source",
-                          "note":  "T006:补丁包骨架与命名约定(一个原版目标一个类、只判定本牌 cardID、不出玩家可见文本);实际补丁由 T019/T024/T029-T031 填充"
+                          "note":  "T006 骨架 + T019 起填充:命名约定(一个原版目标一个类、只判定本牌 cardID、不出玩家可见文本);US2 的 CardGroupShufflePatch 已实现,余下由 T024/T029-T031 填充"
                       },
                       {
                           "path":  "src/main/java/anthonyswrath/AnthonysWrathMod.java",
                           "kind":  "source",
-                          "note":  "T003/T008/T009/T011/T012:入口类实现并订阅 EditStrings / EditCards / AddCustomModeMods / PostCreateStartingDeck 四个 BaseMod 接口"
+                          "note":  "T003/T008/T009/T011/T012:入口类实现并订阅 EditStrings / EditCards / AddCustomModeMods / PostCreateStartingDeck 四个 BaseMod 接口;T017:US2 不新增订阅,置底由 patches/vanilla 的 @SpirePatch 自动应用,三条洗牌路径说明写入 javadoc"
                       },
                       {
                           "path":  "src/main/resources/strings/anthonyswrath/eng/cards.json",
@@ -339,7 +338,27 @@
                       {
                           "path":  "awprobe.log",
                           "kind":  "probe-log",
-                          "note":  "2026-10-24 19:06~19:10 探针日志(GBK,123 行,17,245 bytes):Run A 铁甲战士普通自定义局 + Run B 观者 Draft 局,US1 验证据此判定;工作区根为 *.log 忽略规则覆盖,不入库;内容要点见 memory/log/022"
+                          "note":  "2026-10-24 19:06~19:10 探针日志(GBK,123 行,17,245 bytes):Run A 铁甲战士普通自定义局 + Run B 观者 Draft 局,US1 验证据此判定;工作区根为 *.log 忽略规则覆盖,不入库;内容要点见 memory/log/022;US2 T020 实测时会重建并覆盖"
+                      },
+                      {
+                          "path":  "src/main/java/anthonyswrath/run/DrawPileOrdering.java",
+                          "kind":  "source",
+                          "note":  "T016/T018:洗牌后置底规则;只处理 DRAW_PILE/DISCARD_PILE(含 initializeDeck 临时组)并附 player 牌堆身份兜底;多副本按洗后相对顺序成组到索引 0..k-1;组内无本牌返回 false 且不改动(EC-003)"
+                      },
+                      {
+                          "path":  "src/main/java/anthonyswrath/patches/vanilla/CardGroupShufflePatch.java",
+                          "kind":  "source",
+                          "note":  "T019:两个 postfix 补丁(paramtypez={} 命中 shuffle()、{Random} 命中 shuffle(Random)),只调 DrawPileOrdering;离线复刻 MTS 目标解析自检命中对应重载(18/18)"
+                      },
+                      {
+                          "path":  "memory/log/023-20261024-us2-implementation.md",
+                          "kind":  "record",
+                          "note":  "US2 实现记录:冷启动、T016/T019/T017/T018 实现口径与 DEC-022、索引 0 → 底部 的字节码复核、V2.3.4 全库洗牌调用点静态清点(8 处/4 处战斗牌堆)、离线补丁自检 18/18、探针新命令与 T020 实测步骤、四层提交表"
+                      },
+                      {
+                          "path":  "memory/facts/f017-vanilla-shuffle-call-sites.md",
+                          "kind":  "fact",
+                          "note":  "verified:原版 V2.3.4 全库仅 8 处 CardGroup.shuffle,4 处作用于战斗牌堆、4 处只洗 UNSPECIFIED 暂存组;无直接对牌堆 group 的 Collections.shuffle;两条搬运路径 0→尾 addToTop 使被洗组索引 0 = drawPile 索引 0 = 底部"
                       }
                   ],
     "decisions":  [
@@ -447,6 +466,11 @@
                           "id":  "021",
                           "topic":  "US1 验收裁定:QS-01/02/08 依 awprobe.log 判定通过;QS-14 降级为 T041 必做项;US2 留下一会话",
                           "path":  "memory/log/022-20261024-us1-acceptance-qs012.md"
+                      },
+                      {
+                          "id":  "022",
+                          "topic":  "US2 实现口径:两个 CardGroup.shuffle 原语 postfix + DRAW_PILE/DISCARD_PILE 类型过滤;多副本按洗后相对顺序成组置底;T017 以补丁自动应用为接入点(不加入口订阅,否决 StartBattle 兜底与拦截 Collections.shuffle)",
+                          "path":  "memory/log/023-20261024-us2-implementation.md"
                       }
                   ],
     "notes":  [
@@ -478,7 +502,12 @@
                   "QS-01 文本证据为间接(选项进入 customMods + RunModStrings/CardStrings 无缺键报错);屏幕中文文案目视复核留 US2 首轮顺手完成",
                   "游戏日志无本 mod 异常;Loadout 1.2.4 启动时 INFO 'Error patching anthonyswrath.cards.AnthonysWrathCurse!'(第三方行为,未崩溃);单卡视图 [WARNING] No image at placeholder/AnthonysWrath_p.png,T036 解决",
                   "推送核对(2026-10-24 19:1x):四仓 remote master 仍为上一批 HEAD(src 6d8affc / specs c63aa26 / memory 8cf8c4b / top 1e7320f),与用户口述不一致;本轮两批提交均待重推,顺序 src→specs→memory→top",
-                  "US2 未实现期间首洗后本牌不在底部(本次实测索引 2/1),勿按回归判违规"
+                  "US2 未实现期间首洗后本牌不在底部(本次实测索引 2/1),勿按回归判违规",
+                  "US2 实现完成(2026-10-24,见 log/023 与 DEC-022):T016 `run/DrawPileOrdering`(只处理 DRAW_PILE/DISCARD_PILE、多副本保序成组到 0..k-1、缺席返回 false)、T019 `patches/vanilla/CardGroupShufflePatch`(两原语 postfix)、T017 补丁自动应用即接入点、T018 确定性自检命令 awprobe sinktest;T020 待用户进游戏实测",
+                  "V2.3.4 洗牌调用点静态清点(f017):全库仅 8 处 CardGroup.shuffle——4 处作用战斗牌堆(initializeDeck 临时 DRAW_PILE 组、EmptyDeckShuffleAction discardPile、ShuffleAction 被 Reboot/DeepBreath 传 drawPile、ShuffleAllAction discardPile),另 4 处只洗 UNSPECIFIED 暂存组;无直接 Collections.shuffle 洗牌堆 group;两条搬运路径 0→尾 addToTop,故被洗组索引 0 = 底部",
+                  "T020 实测入口:quickstart §4 的 2026-10-24 US2 段;awprobe drawpile(只读看两堆)、shuffleaction(真实牌触发 ShuffleAction)、sinktest(4 用例确定性自检,应 pass=4/4);多副本用 awprobe addcard anthonyswrath:AnthonysWrath 后在下一场战斗看索引 0、1",
+                  "本轮开工前四仓远端核对(2026-10-24 19:30):top 55927d4 / src 56fb411 / specs 6f25c40 / memory b63d718,remote master == 本地 HEAD(用户已推送上批);本轮新提交待推送,顺序 src → specs → memory → top",
+                  "验证记录三级仍遵守:US2 可复现流程在 quickstart §4,过程记录在 memory/log/023,结论升入 facts f017(方法=全库静态扫描)"
               ],
     "git":  {
                 "intentionallyUncommitted":  [
@@ -488,36 +517,33 @@
                                     {
                                         "repo":  "src",
                                         "ahead":  1,
-                                        "head":  "本轮提交(推送前以 git -C src log --oneline origin/master..HEAD 核对)",
+                                        "head":  "本轮提交 b3df8ef(推送前以 git -C src log --oneline origin/master..HEAD 核对;远端 = 56fb411)",
                                         "commits":  [
-                                                        "本轮:Implement user story 1: option, curse card, bilingual strings and starting-deck injection"
+                                                        "本轮:Implement user story 2: shuffle-order bottom placement and multi-copy grouping"
                                                     ]
                                     },
                                     {
                                         "repo":  "specs",
-                                        "ahead":  2,
-                                        "head":  "本轮提交(推送前核对;远端 19:1x 仍停在 c63aa26)",
+                                        "ahead":  1,
+                                        "head":  "本轮提交 3d3bf18(推送前核对;远端 = 6f25c40)",
                                         "commits":  [
-                                                        "本轮:Complete phase 2 and record the user story 1 implementation decisions",
-                                                        "本轮:Record the user story 1 acceptance results for QS-01/02/08"
+                                                        "本轮:Record the user story 2 implementation and the T020 validation steps"
                                                     ]
                                     },
                                     {
                                         "repo":  "memory",
-                                        "ahead":  2,
-                                        "head":  "本轮提交(推送前核对;远端 19:1x 仍停在 8cf8c4b)",
+                                        "ahead":  1,
+                                        "head":  "本轮提交(推送前核对;远端 = b63d718)",
                                         "commits":  [
-                                                        "本轮:Record phase 2 completion and the user story 1 implementation; add facts f015/f016",
-                                                        "本轮:Record the user story 1 acceptance handoff for QS-01/02/08"
+                                                        "本轮:Record the user story 2 implementation; add fact f017"
                                                     ]
                                     },
                                     {
                                         "repo":  "top",
-                                        "ahead":  2,
-                                        "head":  "本轮提交(推送前核对;远端 19:1x 仍停在 1e7320f)",
+                                        "ahead":  1,
+                                        "head":  "本轮提交(推送前核对;远端 = 55927d4)",
                                         "commits":  [
-                                                        "本轮:Advance the layer pointers for the user story 1 implementation",
-                                                        "本轮:Advance the layer pointers for the user story 1 acceptance records"
+                                                        "本轮:Advance the layer pointers for the user story 2 implementation"
                                                     ]
                                     }
                                 ],
@@ -528,10 +554,10 @@
                                   "top(顶层最后)"
                               ],
                 "remoteBaseline":  {
-                                       "top":  "1e7320f",
-                                       "memory":  "8cf8c4b",
-                                       "specs":  "c63aa26",
-                                       "src":  "6d8affc"
+                                       "top":  "55927d4",
+                                       "memory":  "b63d718",
+                                       "specs":  "6f25c40",
+                                       "src":  "56fb411"
                                    }
             },
     "memoryStores":  {
