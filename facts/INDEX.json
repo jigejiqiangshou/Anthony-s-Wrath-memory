@@ -109,6 +109,42 @@
       "verified": "对 libs/BaseMod.jar 执行 jar tf/javap:AddCustomModeModsSubscriber.receiveCustomModeMods(List<CustomMod>)、EditCardsSubscriber/EditStringsSubscriber/PostCreateStartingDeckSubscriber/PostDungeonInitializeSubscriber 的方法签名、BaseMod.subscribe/publishAddCustomModeMods;对 desktop-1.0.jar javap 得 CustomMod 构造器 (String,String,boolean) 与字段;全库无 CustomModeMods 类",
       "evidence": "memory/log/014 §1",
       "path": "memory/facts/f009-basemod-jar-subscriber-interfaces.md"
+    },
+    {
+      "id": "f010",
+      "slug": "sts1-shuffle-primitives-and-draw-direction",
+      "title": "洗牌原语互不转调;drawPile 索引 0 = 底部,末位 = 下一次抽到",
+      "status": "verified",
+      "feature": "001-anthonys-wrath",
+      "coldStart": false,
+      "scope": "杀戮尖塔 1 桌面版 V2.3.4 (2022-12-18);换版本需重跑反汇编与探针;不适用于 2 代",
+      "verified": "javap -p -c 反汇编 desktop-1.0.jar:CardGroup.shuffle()/shuffle(Random) 各自 new java.util.Random + Collections.shuffle(互不转调);addToTop 追加、addToBottom 插索引0、getTopCard=group.get(size-1);initializeDeck 先洗临时 DRAW_PILE 组再按序填入;EmptyDeckShuffleAction.update 首调洗 discardPile 后每次搬1张(索引0→尾);awprobe.log 654 行 10/10 次末位先抽走、搬运顺序两次核对一致",
+      "evidence": "memory/log/018-20261024-t004-round1-collection-addcard-fix.md",
+      "path": "memory/facts/f010-sts1-shuffle-primitives-and-draw-direction.md"
+    },
+    {
+      "id": "f011",
+      "slug": "load-path-rebuilds-curse-pool-without-postdungeoninit",
+      "title": "读档重建 curseCardPool 但不触发 PostDungeonInitialize;StartGame 两条路径都触发",
+      "status": "verified",
+      "feature": "001-anthonys-wrath",
+      "coldStart": false,
+      "scope": "杀戮尖塔 1 V2.3.4 + BaseMod 5.56.0 + ModTheSpire 3.30.3;换版本或换 BaseMod 须重采",
+      "verified": "javap 反汇编 AbstractDungeon.initializeCardPools 偏移116 invokespecial addCurseCards;addCurseCards 遍历 CardLibrary.cards 并排除4个ID;awprobe.log 4 次启动(新档2/读档2)全部执行 initializeCardPools 且池稳定10张;PostDungeonInitialize 仅新档2次(晚43/10ms);StartGame 4次均在池重建后",
+      "evidence": "memory/log/018-20261024-t004-round1-collection-addcard-fix.md",
+      "path": "memory/facts/f011-load-path-rebuilds-curse-pool-without-postdungeoninit.md"
+    },
+    {
+      "id": "f012",
+      "slug": "basemod-console-autocomplete-replaces-argument",
+      "title": "BaseMod 5.56 控制台 Tab/→ 补全用 extraOptions 候选整词覆盖当前参数",
+      "status": "verified",
+      "feature": "001-anthonys-wrath",
+      "coldStart": false,
+      "scope": "libs/BaseMod.jar = 5.56.0(SHA256 C3353C10…FBAF);换版本须重新反汇编 DevConsole/ConsoleCommand/AutoComplete",
+      "verified": "javap -p -c -constants 反汇编 BaseMod.jar:DevConsole.execute 只 trim+split 无 lowercase;depth=命令词消耗数(awprobe 恒1);autocomplete 用 tokens[last] 前缀过滤 extraOptions;AutoComplete Tab=61/→=22 调 fillInSuggestion 替换最后空格后的词并补空格,Enter=66 直接执行原文;awprobe.log #561 cmd.addcard 实参 cursepool 与该机制完全吻合;修复后离线自检 trap 前缀不再产生子命令词",
+      "evidence": "memory/log/018-20261024-t004-round1-collection-addcard-fix.md",
+      "path": "memory/facts/f012-basemod-console-autocomplete-replaces-argument.md"
     }
   ]
 }

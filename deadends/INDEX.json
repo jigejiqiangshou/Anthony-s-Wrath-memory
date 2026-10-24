@@ -25,6 +25,18 @@
       "scope": "本机 DSH 沙箱内任何依赖 Maven 插件/仓库的构建(如 mvn package);javac 直编不受影响",
       "evidence": "memory/facts/f008-maven-build-blocked-in-dsh-sandbox.md;memory/log/012 §7-§8",
       "path": "memory/deadends/e002-maven-package-in-dsh-sandbox.md"
+    },
+    {
+      "id": "e003",
+      "slug": "postdungeoninit-only-curse-pool-exclusion",
+      "title": "只靠 PostDungeonInitializeSubscriber 排除 curseCardPool",
+      "status": "closed",
+      "feature": "001-anthonys-wrath",
+      "reason": "hook-not-fired-on-load",
+      "reopenIf": "BaseMod 改变 PostDungeonInitialize 发布语义使其读档也触发,或读档不再调用 initializeCardPools,或出现读档也触发且晚于池重建的其它钩子",
+      "scope": "随机诅咒池排除(R-007/T027)的落点选择;不涉及新档路径",
+      "evidence": "memory/facts/f011-load-path-rebuilds-curse-pool-without-postdungeoninit.md;memory/log/018",
+      "path": "memory/deadends/e003-postdungeoninit-only-curse-pool-exclusion.md"
     }
   ]
 }
