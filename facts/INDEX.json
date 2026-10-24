@@ -205,6 +205,18 @@
       "verified": "2026-10-24 ZipArchive 读全库 7038 个 class,按常量池筛出含 CardGroup+shuffle 的 27 个候选并逐个 javap -p -c 枚举调用点:8 处 CardGroup.shuffle 中 4 处作用于战斗牌堆(initializeDeck 临时 DRAW_PILE 组/EmptyDeckShuffleAction 洗 discardPile/ShuffleAction 被 Reboot 与 DeepBreath 传 drawPile/ShuffleAllAction 洗 discardPile),另 4 处只洗 UNSPECIFIED 暂存组;全库 Collections.shuffle 无一处直接洗 drawPile/discardPile.group;两条搬运路径均按 0→尾 addToTop,故被洗组索引 0 = drawPile 索引 0 = 底部",
       "evidence": "memory/log/023-20261024-us2-implementation.md;specs/001-anthonys-wrath/research.md §R-004 的 Implemented 段",
       "path": "memory/facts/f017-vanilla-shuffle-call-sites.md"
+    },
+    {
+      "id": "f018",
+      "slug": "exhausted-reshuffle-unreachable-in-final-product",
+      "title": "成品中「抽牌堆耗尽重洗」不可达:置底 + 抽到即负的必然结果;成品可观测洗牌只有首洗与牌/遗物触发的非耗尽重洗",
+      "status": "verified",
+      "feature": "001-anthonys-wrath",
+      "coldStart": false,
+      "scope": "「安东尼之怒」成品行为(FR-006 + FR-008 + FR-010 同时生效);不适用于 US3 关闭的开发期探针版;换设计(不置底/延迟判负)即失效",
+      "verified": "由已验证前提联合推导 + 原版调用链核对(非直接实测):f010 drawPile 索引 0=底部且 draw 取末位 → 置底后本牌必为最后一张被抽;f017 EmptyDeckShuffleAction 仅在向空抽牌堆抽牌时由 DrawCardAction 入队;FR-008/FR-010 本牌入手即判负并短路后续抽牌 ⇒ 抽空瞬间已判负,空堆重洗不发生。旁证:2026-10-24 探针版 awprobe.log(US3 未实装)首洗后索引 0、抽空时本牌在手中且弃牌堆不含它,与推论一致。已回写 spec SC-002/EC-001/US2 场景 2/Assumptions 与 quickstart QS-04",
+      "evidence": "memory/log/024-20261024-us2-t020-partial-and-exhausted-reshuffle-reachability.md;memory/facts/f010;memory/facts/f017",
+      "path": "memory/facts/f018-exhausted-reshuffle-unreachable-in-final-product.md"
     }
   ]
 }

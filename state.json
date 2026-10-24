@@ -1,14 +1,15 @@
 {
     "schema":  2,
-    "updated":  "2026-10-24T19:32:00+08:00",
-    "focus":  "US2 实现完成:T016 置底规则 run/DrawPileOrdering + T019 两个 CardGroup.shuffle 原语 postfix + T017 三条洗牌路径覆盖论证(全库静态清点) + T018 多副本成组/缺席跳过;JDK8 javac 13 源文件 exit 0、离线 MTS 补丁目标自检 18/18。游戏内 T020(QS-03/04/05/17)待用户构建后实测。四仓远端已于 19:30 前核对为与本地上一批 HEAD 一致(用户已推送),本轮新提交待推送。",
+    "updated":  "2026-10-24T20:12:00+08:00",
+    "focus":  "US2 部分验收:探针版实测 QS-03(首洗后本牌在 drawPile 索引 0,awprobe.log #16~#19/#43)与牌触发非耗尽重洗一次(#47~#50)通过;用户指出并复核「抽牌堆耗尽重洗」在成品中不可达(置底 + 抽到即负的必然结果,fact f018),已回写 spec SC-002/EC-001/US2 场景 2/Assumptions 与 quickstart QS-04/T020,验收范围修订为「首洗 + 至少两次非耗尽重洗」。T020 剩余 QS-04 第二次重洗、QS-05、QS-17、awprobe sinktest 待用户执行;随后进入 US3。四仓上一批提交待推送,本轮再 +1 批。",
     "blockers":  [
-                     "US2 游戏内实测未执行(T020:QS-03/04/05/17;步骤见 quickstart §4 的 2026-10-24 US2 段与 awprobe drawpile/shuffleaction/sinktest);US3~US5 尚未实现,US3 从 T021 入手判定开始",
+                     "US2 T020 未完成(剩 QS-04 第二次非耗尽重洗、QS-05 多副本、QS-17 第二场、sinktest;步骤见 quickstart §4 2026-10-24 US2 段);完成后才勾选 T020 并进入 US3(T021 入手判定)",
+                     "US3~US5 尚未实现;US3 需注意 FR-010 终局短路与一次性守卫(T023)",
                      "QS-14(EC-006 卸载 / 禁用后读旧档)未执行:已列入 T041 完整回归必做项,发布前不得跳过",
-                     "诅咒池仍含本牌(T027 处理);US2 已实现但未实测,勿据旧日志(首洗后索引 2/1)判回归",
+                     "诅咒池仍含本牌(T027 处理);「抽到即负」尚未实装,探针版里抽到本牌不会判负(可据此做耗尽重洗实现期验证,成品不可达,f018)",
                      "本沙箱 git submodule 系列命令 exit 66(facts f001);构建与推送仍需用户普通终端(沙箱内 Maven 不可用,facts f008)"
                  ],
-    "next":  "用户侧先做 US2 实测:普通终端 mvn package 覆盖游戏 mods/anthonyswrath.jar、删除旧 awprobe.log → 按 quickstart §4 的 2026-10-24 US2 段跑 QS-03/04/05/17 + QS-01 中文文案目视复核 + awprobe sinktest(应 pass=4/4)→ 交回 awprobe.log。收到日志后:判定 T020、写 memory/log/ 记录并勾选,然后进入 US3(T021 入手判定 → T022 两个判定点 addToHand / addToTop(hand) → T023 一次性守卫与终局短路 → T024 入口接入/必要补丁 → T025 实测 QS-06/07/09/15/16);之后 US4(T026~T028)→ US5(T029~T034);阶段末四层提交(本轮已提交待推送,顺序 src → specs → memory → top)。",
+    "next":  "用户侧完成 T020 剩余项(当前 jar 无需重建):①同场战斗再执行一次 awprobe shuffleaction → awprobe drawpile 应在索引 0(QS-04 两次非耗尽重洗);②不抽到本牌结束第一场战斗 → 地图界面 awprobe addcard anthonyswrath:AnthonysWrath → 进下一场战斗 awprobe drawpile 应见两张副本连续位于索引 0、1(QS-05),同场验证第二场重新置底(QS-17);③awprobe sinktest 应输出 summary pass=4/4;④顺手做 QS-01 中文文案目视复核;⑤(可选)按 quickstart §4 步骤 7 做耗尽重洗实现期验证(US3 实装前最后机会)。交回 awprobe.log 后判定并勾选 T020,然后进入 US3:T021 入手判定 → T022 两个判定点(addToHand / 目标为手牌的 addToTop)→ T023 一次性守卫与终局短路 → T024 入口接入/必要补丁 → T025 实测 QS-06/07/09/15/16;之后 US4(T026~T028)→ US5(T029~T034);每轮结束四层提交(待推送顺序 src → specs → memory → top)。",
     "artifacts":  [
                       {
                           "path":  ".specify/memory/constitution.md",
@@ -18,7 +19,7 @@
                       {
                           "path":  "specs/001-anthonys-wrath/spec.md",
                           "kind":  "spec",
-                          "note":  "5 US/14 FR/5 SC/11 EC/16 假设;US4 可见性修缮、FR-012/013 去重并新增 FR-014;FR-009 按 DEC-3a 降为可观察判据;已随 specs 6bdb595 提交"
+                          "note":  "5 US/14 FR/5 SC/11 EC/16 假设;US4 可见性修缮、FR-012/013 去重并新增 FR-014;FR-009 按 DEC-3a 降为可观察判据;2026-10-24 澄清「抽牌堆耗尽重洗」成品不可达(SC-002/EC-001/US2 场景 2/Assumptions,f018)"
                       },
                       {
                           "path":  "specs/001-anthonys-wrath/plan.md",
@@ -28,12 +29,12 @@
                       {
                           "path":  "specs/001-anthonys-wrath/tasks.md",
                           "kind":  "tasks",
-                          "note":  "41 任务 / 8 Phase;T001~T019 完成(T016~T019 于 2026-10-24 实现完成,离线自检与清点见 log/023;US1 QS-01/02/08 已通过);T020 US2 实测待用户;QS-14 留 T041;T012/T016/T022/T027 已按实测定稿"
+                          "note":  "41 任务 / 8 Phase;T001~T019 完成(US1 QS-01/02/08 已通过;T016~T019 实现于 2026-10-24,见 log/023);T020 部分实测(QS-03 与非耗尽重洗一次通过)+ 范围修订(耗尽分支成品不可达,f018),剩 QS-05/QS-17/sinktest;QS-14 留 T041;T012/T016/T022/T027 已按实测定稿"
                       },
                       {
                           "path":  "specs/001-anthonys-wrath/research.md",
                           "kind":  "research",
-                          "note":  "R-001..R-014;R-003 订阅 StartGame 并回写选项注册实测;R-004/R-005/R-006/R-007 两轮实测后定稿;R-004 增补 Implemented(T016~T019)段:作用范围、索引 0 映射的字节码复核、V2.3.4 洗牌调用点静态清点、离线补丁自检;R-008 补候选排除/商店移除/变化行为(R-009 补卡牌实现与占位图);R-014 记录选项注册/选中状态/文本加载/卡牌注册口径与「负面：」结论"
+                          "note":  "R-001..R-014;R-003 订阅 StartGame 并回写选项注册实测;R-004/R-005/R-006/R-007 两轮实测后定稿;R-004 增补 Implemented(T016~T019)段:作用范围、索引 0 映射的字节码复核、V2.3.4 洗牌调用点静态清点、离线补丁自检;R-004 另增 Reachability 段(耗尽重洗成品不可达,2026-10-24);R-008 补候选排除/商店移除/变化行为(R-009 补卡牌实现与占位图);R-014 记录选项注册/选中状态/文本加载/卡牌注册口径与「负面：」结论"
                       },
                       {
                           "path":  "specs/001-anthonys-wrath/data-model.md",
@@ -43,7 +44,7 @@
                       {
                           "path":  "specs/001-anthonys-wrath/quickstart.md",
                           "kind":  "validation",
-                          "note":  "可复现验证流程:前置、构建、T004 探针命令表与场景 1~8(标注 2026-10-24 两轮已执行)、QS-01..17;§3 命令表补 shuffleaction/drawpile/sinktest;§4 补 2026-10-24 首轮验收与 US2 实测步骤(QS-03/04/05/17 + QS-01 文案复核)"
+                          "note":  "可复现验证流程:前置、构建、T004 探针命令表与场景 1~8(标注 2026-10-24 两轮已执行)、QS-01..17;§3 命令表补 shuffleaction/drawpile/sinktest;§4 补 2026-10-24 首轮验收与 US2 实测步骤(QS-03/04/05/17 + QS-01 文案复核);QS-04 与 T020 步骤按 f018 修订(耗尽分支成品不可达、探针 shuffle after 顺序陷阱)"
                       },
                       {
                           "path":  "specs/001-anthonys-wrath/checklists/requirements.md",
@@ -238,7 +239,7 @@
                       {
                           "path":  "src/main/java/anthonyswrath/probe/ProbePatches.java",
                           "kind":  "probe",
-                          "note":  "T004:16 组只读观测补丁(含 addToBottom(hand));shuffle()/shuffle(Random) 分别挂;离线 SpirePatch 自检 16/16 OK"
+                          "note":  "T004:16 组只读观测补丁(含 addToBottom(hand));shuffle()/shuffle(Random) 分别挂;离线 SpirePatch 自检 16/16 OK;2026-10-24 类注释补「探针 shuffle after 可能早于 mod 置底后处理,判据看最终状态」"
                       },
                       {
                           "path":  "src/main/java/anthonyswrath/probe/AwProbeCommand.java",
@@ -248,7 +249,7 @@
                       {
                           "path":  "src/main/java/anthonyswrath/probe/ProbeLog.java",
                           "kind":  "probe",
-                          "note":  "T004:日志双写 stdout 与文件;路径可配置(AWPROBE_LOG > %USERPROFILE%\\awprobe.logpath > user.home,失败回退默认,首行打印实际路径);ids() 注释为「索引 0 = 底部」"
+                          "note":  "T004:日志双写 stdout 与文件;路径可配置(AWPROBE_LOG > %USERPROFILE%\\awprobe.logpath > user.home,失败回退默认,首行打印实际路径);ids() 注释为「索引 0 = 底部」;TRACKED 于 2026-10-24 补完整 cardID anthonyswrath:AnthonysWrath(修 tracked={none})"
                       },
                       {
                           "path":  "src/main/java/anthonyswrath/options/AnthonysWrathOption.java",
@@ -338,7 +339,7 @@
                       {
                           "path":  "awprobe.log",
                           "kind":  "probe-log",
-                          "note":  "2026-10-24 19:06~19:10 探针日志(GBK,123 行,17,245 bytes):Run A 铁甲战士普通自定义局 + Run B 观者 Draft 局,US1 验证据此判定;工作区根为 *.log 忽略规则覆盖,不入库;内容要点见 memory/log/022;US2 T020 实测时会重建并覆盖"
+                          "note":  "2026-10-24 20:00:49~20:01:14 探针日志(GBK,73 行,11,305 bytes):观者+Draft+本选项一局;US2 部分实测(QS-03 首洗置底通过 #16~#19/#43、牌触发非耗尽重洗通过 #47~#50;curseCardPool 含本牌为 T027 预期);19:06 的 US1 旧日志已被覆盖(要点见 memory/log/022);工作区根 *.log 忽略,不入库;本日志要点见 memory/log/024"
                       },
                       {
                           "path":  "src/main/java/anthonyswrath/run/DrawPileOrdering.java",
@@ -359,6 +360,16 @@
                           "path":  "memory/facts/f017-vanilla-shuffle-call-sites.md",
                           "kind":  "fact",
                           "note":  "verified:原版 V2.3.4 全库仅 8 处 CardGroup.shuffle,4 处作用于战斗牌堆、4 处只洗 UNSPECIFIED 暂存组;无直接对牌堆 group 的 Collections.shuffle;两条搬运路径 0→尾 addToTop 使被洗组索引 0 = drawPile 索引 0 = 底部"
+                      },
+                      {
+                          "path":  "memory/log/024-20261024-us2-t020-partial-and-exhausted-reshuffle-reachability.md",
+                          "kind":  "record",
+                          "note":  "US2 部分实测记录:awprobe.log 事件逐条(首洗置底、ShuffleAction 非耗尽重洗)、用户提出的耗尽重洗逻辑问题与复核推导(成品不可达)、探针日志顺序陷阱、spec/quickstart/tasks 范围修订(DEC-023)、探针 TRACKED 修复、剩余 T020 步骤"
+                      },
+                      {
+                          "path":  "memory/facts/f018-exhausted-reshuffle-unreachable-in-final-product.md",
+                          "kind":  "fact",
+                          "note":  "verified:成品中「抽牌堆耗尽重洗」不可达(置底使本牌必为最后一张被抽;抽空即抽到即判负、FR-010 短路空堆重洗);成品可观测洗牌=首洗+牌/遗物触发非耗尽重洗;已回写 spec/quickstart"
                       }
                   ],
     "decisions":  [
@@ -471,6 +482,11 @@
                           "id":  "022",
                           "topic":  "US2 实现口径:两个 CardGroup.shuffle 原语 postfix + DRAW_PILE/DISCARD_PILE 类型过滤;多副本按洗后相对顺序成组置底;T017 以补丁自动应用为接入点(不加入口订阅,否决 StartBattle 兜底与拦截 Collections.shuffle)",
                           "path":  "memory/log/023-20261024-us2-implementation.md"
+                      },
+                      {
+                          "id":  "023",
+                          "topic":  "耗尽重洗成品不可达:验收范围修订为「首洗 + 至少两次非耗尽重洗」,实现不做改动(洗牌原语构造性覆盖);spec SC-002/EC-001/US2 场景 2/Assumptions 与 quickstart QS-04/T020 同步;可选探针版实现期验证",
+                          "path":  "memory/log/024-20261024-us2-t020-partial-and-exhausted-reshuffle-reachability.md"
                       }
                   ],
     "notes":  [
@@ -507,7 +523,11 @@
                   "V2.3.4 洗牌调用点静态清点(f017):全库仅 8 处 CardGroup.shuffle——4 处作用战斗牌堆(initializeDeck 临时 DRAW_PILE 组、EmptyDeckShuffleAction discardPile、ShuffleAction 被 Reboot/DeepBreath 传 drawPile、ShuffleAllAction discardPile),另 4 处只洗 UNSPECIFIED 暂存组;无直接 Collections.shuffle 洗牌堆 group;两条搬运路径 0→尾 addToTop,故被洗组索引 0 = 底部",
                   "T020 实测入口:quickstart §4 的 2026-10-24 US2 段;awprobe drawpile(只读看两堆)、shuffleaction(真实牌触发 ShuffleAction)、sinktest(4 用例确定性自检,应 pass=4/4);多副本用 awprobe addcard anthonyswrath:AnthonysWrath 后在下一场战斗看索引 0、1",
                   "本轮开工前四仓远端核对(2026-10-24 19:30):top 55927d4 / src 56fb411 / specs 6f25c40 / memory b63d718,remote master == 本地 HEAD(用户已推送上批);本轮新提交待推送,顺序 src → specs → memory → top",
-                  "验证记录三级仍遵守:US2 可复现流程在 quickstart §4,过程记录在 memory/log/023,结论升入 facts f017(方法=全库静态扫描)"
+                  "验证记录三级仍遵守:US2 可复现流程在 quickstart §4,过程记录在 memory/log/023,结论升入 facts f017(方法=全库静态扫描)",
+                  "US2 部分验收(2026-10-24 20:00~20:01,awprobe.log 73 行):QS-03 通过(#16~#19 首洗后本牌在临时组/drawPile 索引 0、#19 StartBattle 段、#43 drawpile 仍 0);QS-04 牌触发非耗尽重洗一次通过(#47 before 索引 0 → #48 探针 after 索引 4 → #50 cmd.drawpile 索引 0);Draft+本选项开局/注入/填充未见回归;curseCardPool 含本牌为 T027 预期。详见 log/024",
+                  "用户 2026-10-24 提出的逻辑问题已复核成立(f018):成品中「抽牌堆耗尽重洗」不可达——置底使本牌必为最后一张被抽,抽空即把它抽入手中并判负,FR-010 短路空堆重洗;成品可观测洗牌只剩首洗与牌/遗物触发的非耗尽重洗。验收范围已按 DEC-023 修订(spec SC-002/EC-001/US2 场景 2/Assumptions、quickstart QS-04/T020、tasks T020 注)",
+                  "读探针日志注意:patch.shuffle().after / patch.shuffle(Random).after 可能早于本 mod 的置底后处理(2026-10-24 #48 索引 4、随后 cmd.drawpile 索引 0);判断置底以 hook.StartBattle / patch.initializeDeck.after / patch.emptyDeckShuffle.after / awprobe drawpile 的最终状态为准;ProbeLog.TRACKED 已补完整 cardID(下次构建起 tracked 生效)",
+                  "推送核对(2026-10-24 20:0x):四仓 remote 仍为 top 55927d4 / src 56fb411 / specs 6f25c40 / memory b63d718;上一批(US2 实现)与本轮(可达性澄清)各 1 个提交待推,合计 ahead=2,顺序 src→specs→memory→top"
               ],
     "git":  {
                 "intentionallyUncommitted":  [
@@ -516,34 +536,38 @@
                 "pendingPush":  [
                                     {
                                         "repo":  "src",
-                                        "ahead":  1,
-                                        "head":  "本轮提交 b3df8ef(推送前以 git -C src log --oneline origin/master..HEAD 核对;远端 = 56fb411)",
+                                        "ahead":  2,
+                                        "head":  "本轮两批提交(推送前以 git -C src log --oneline origin/master..HEAD 核对;远端 = 56fb411)",
                                         "commits":  [
-                                                        "本轮:Implement user story 2: shuffle-order bottom placement and multi-copy grouping"
+                                                        "本轮:Implement user story 2: put the curse at the bottom of the pile on every shuffle",
+                                                        "本轮:Fix the probe tracked card id and document the shuffle-log ordering"
                                                     ]
                                     },
                                     {
                                         "repo":  "specs",
-                                        "ahead":  1,
-                                        "head":  "本轮提交 3d3bf18(推送前核对;远端 = 6f25c40)",
+                                        "ahead":  2,
+                                        "head":  "本轮两批提交(推送前核对;远端 = 6f25c40)",
                                         "commits":  [
-                                                        "本轮:Record the user story 2 implementation and the T020 validation steps"
+                                                        "本轮:Record the user story 2 implementation and the T020 validation steps",
+                                                        "本轮:Clarify that the exhausted-pile reshuffle is unreachable in the finished product"
                                                     ]
                                     },
                                     {
                                         "repo":  "memory",
-                                        "ahead":  1,
-                                        "head":  "本轮提交(推送前核对;远端 = b63d718)",
+                                        "ahead":  2,
+                                        "head":  "本轮两批提交(推送前核对;远端 = b63d718)",
                                         "commits":  [
-                                                        "本轮:Record the user story 2 implementation; add fact f017"
+                                                        "本轮:Record the user story 2 implementation; add fact f017",
+                                                        "本轮:Record the user story 2 partial acceptance and the exhausted-reshuffle reachability; add fact f018"
                                                     ]
                                     },
                                     {
                                         "repo":  "top",
-                                        "ahead":  1,
-                                        "head":  "本轮提交(推送前核对;远端 = 55927d4)",
+                                        "ahead":  2,
+                                        "head":  "本轮两批提交(推送前核对;远端 = 55927d4)",
                                         "commits":  [
-                                                        "本轮:Advance the layer pointers for the user story 2 implementation"
+                                                        "本轮:Advance the layer pointers for the user story 2 implementation",
+                                                        "本轮:Advance the layer pointers for the user story 2 partial acceptance"
                                                     ]
                                     }
                                 ],
