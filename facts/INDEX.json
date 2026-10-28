@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "updated": "2026-10-24",
+  "updated": "2026-10-29",
   "entries": [
     {
       "id": "f001",
@@ -253,6 +253,42 @@
       "verified": "2026-10-24 javap -p -c:SpireReturn 提供 Continue()/Return(T)/Return()(返回 SpireReturn<Void>);PrefixPatchInfo.<init> 置 canSpireReturn=true;ParameterPatchInfo.doPatch 仅当 patch 返回类型为 SpireReturn 时启用,目标为 void 时生成 if (opt.isPresent()) { return; },非 void 时生成 opt.get() 转换;离线目标自检把该 prefix 计入 22/22",
       "evidence": "memory/log/027-20261024-us3-implementation.md;specs/001-anthonys-wrath/research.md §R-005 Implemented",
       "path": "memory/facts/f021-mts-prefix-spirereturn-void-cancellation.md"
+    },
+    {
+      "id": "f022",
+      "slug": "deathscreen-probe-false-positives",
+      "title": "patch.deathScreen 探针的假阳性来源：第三方快速重开按钮的评分重开与本体放弃流程",
+      "status": "verified",
+      "feature": "001-anthonys-wrath",
+      "coldStart": false,
+      "scope": "本机游戏环境（核塔 1 V2.3.4 + 15 个创意工坊 Mod，含「快速重开按钮」quickRestart 创意工坊 ID 1805046408）下判读 awprobe.log 的 patch.deathScreen.*；换 Mod 清单或游戏版本须重采",
+      "verified": "awprobe.log #185/#405 isDead=false 且 74~76 ms 后即 PreStartGame；#308/#540 caller=ConfirmPopup.yesButtonEffect:264；游戏日志 UTC 16:08:31.994 / 16:24:43.840 同步出现 QuickRestart: Scoring and run restart has been initialized. (Settings)；javap -p -c quickRestart.jar 确认 RestartRunHelper.scoreAndRestart 内 invokespecial DeathScreen.\"<init>\"(MonsterGroup)；runs/WATCHER/*.run 放弃局与快速重开局均 victory=false",
+      "evidence": "memory/log/028-20261029-t025-acceptance.md;specs/001-anthonys-wrath/quickstart.md §4（2026-10-29 结果块）",
+      "path": "memory/facts/f022-deathscreen-probe-false-positives.md"
+    },
+    {
+      "id": "f023",
+      "slug": "random-curse-and-removal-landing-points",
+      "title": "随机诅咒来源走 CardLibrary.getCurse（私有 curses 映射，不读 curseCardPool）；移除候选入口统一经 getPurgeableCards，净化之泉例外",
+      "status": "verified",
+      "feature": "001-anthonys-wrath",
+      "coldStart": false,
+      "scope": "杀戮尖塔 1 V2.3.4 (desktop-1.0.jar 12-18-2022) + BaseMod 5.56.0 的 @NoPools 机制；适用于「自注册诅咒牌不被随机来源发出、不被移除」的实现；换版本须重跑反汇编",
+      "verified": "javap -p -c：AbstractDungeon.returnRandomCurse/returnTrulyRandomCardFromAvailable/transformCard 分别调 CardLibrary.getCurse()/getCurse(avoid,rng)，两者遍历私有 curses HashMap 只硬编码排除 4 张参照牌；引用 curseCardPool 的类仅 AbstractDungeon（addCurseCards/initializeCardPools/getCard/getCardFromPool）；BaseMod RemoveExcludedCardsFromPools 是 initializeCardPools postfix，按 @NoPools 从 10 池移除、只清池；全库 7038 class 常量池扫描 + javap 归并 25 个 masterDeck+removeCard 类：候选型 UI 全部先取 getPurgeableCards()，FountainOfCurseRemoval.buttonEffect 自建循环例外，Falling/WeMeetAgain/Vampires 本体按类型或稀有度排除诅咒，removeCard(String) 仅 srcTransformCard 用于变化",
+      "evidence": "memory/log/029-20261029-us4-implementation.md;memory/log/030-20261029-us5-implementation.md;specs/001-anthonys-wrath/research.md §R-007 Correction / §R-008 Implemented",
+      "path": "memory/facts/f023-random-curse-and-removal-landing-points.md"
+    },
+    {
+      "id": "f024",
+      "slug": "mts-legacy-vs-spirepatch2-parameter-mapping",
+      "title": "MTS 3.30.3：旧式 @SpirePatch 的 postfix 不能替换返回值，只有 @SpirePatch2 可以；@SpirePatch2 的 handler 参数按目标参数名（LocalVariableTable）匹配",
+      "status": "verified",
+      "feature": "001-anthonys-wrath",
+      "coldStart": false,
+      "scope": "本项目 libs/ModTheSpire.jar = 3.30.3 + Java 8；用于需要改变原方法返回值或按名传参的补丁；换 MTS 版本须重跑反汇编",
+      "verified": "javap -p -c 于 ModTheSpire.jar：ParameterPatchInfo.doPatch 按 isSpirePatch2 选 ParamInfo2(按名) 或 ParamInfo(按位)；PatchInfo.isSpirePatch2 依注解对象的 AnnotationImpl.getTypeName()；PostfixParamInfo2.specialNameCheck(__result) 才设置 returnsValue 且 alterSrc 生成 return ($r)handler(...)；旧式 @SpirePatch 的 postfix 返回值被忽略；Patcher 扫描四种注解并用 convertSpirePatch2To1 转换，故 StS1 可用 @SpirePatch2；patchParamTypez：空数组=恰好零参数，{Void.class}=按名唯一匹配；项目内 PatchCheck 复刻两套规则 26/26 PASS，负例（prohibitedCard→avoid）FAIL",
+      "evidence": "memory/log/029-20261029-us4-implementation.md;memory/log/030-20261029-us5-implementation.md;specs/001-anthonys-wrath/research.md §R-007/§R-008",
+      "path": "memory/facts/f024-mts-legacy-vs-spirepatch2-parameter-mapping.md"
     }
   ]
 }
